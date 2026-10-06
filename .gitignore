@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+.verify-dist/
+verify-results.json
+*.tsbuildinfo
+next-env.d.ts
+.env
+.env.local
+.DS_Store
+public/pdf.worker.min.mjs
