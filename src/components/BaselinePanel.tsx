@@ -1,0 +1,104 @@
+'use client';
+
+import { useState } from 'react';
+import type { TrainingSample } from '@/engine';
+import { api, errorMessage, type BaselineDto } from '@/lib/api';
+import { fmtInt } from '@/lib/format';
+
+const MAX_TRAIN_ROWS = 100_000;
+
+function toMatrix(s: TrainingSample): Array<Array<number | null>> {
+  const F = s.columns.length;
+  const rows = Math.min(s.rows, MAX_TRAIN_ROWS);
+  const out: Array<Array<number | null>> = new Array(rows);
+  for (let r = 0; r < rows; r++) {
+    const row: Array<number | null> = new Array(F);
+    for (let c = 0; c < F; c++) {
+      const v = s.matrix[r * F + c];
+      row[c] = Number.isFinite(v) ? Math.round(v * 1e6) / 1e6 : null; // JSON has no NaN
+    }
+    out[r] = row;
+  }
+  return out;
+}
+
+/** "Learn from history": send ONLY the numeric feature sample (no original text) to train a baseline in the AI service. */
+export function BaselinePanel({ training, defaultName, baselines, onChanged }: {
+  training?: TrainingSample;
+  defaultName: string;
+  baselines: BaselineDto[];
+  onChanged: () => void;
+}) {
+  const [name, setName] = useState(defaultName);
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
+
+  const train = async (): Promise<void> => {
+    if (!training) return;
+    setBusy(true);
+    setMsg(null);
+    try {
+      const b = await api.createBaseline({
+        name: name.trim() || defaultName,
+        columns: training.columns,
+        kinds: training.kinds,
+        matrix: toMatrix(training),
+        schemaSignature: training.schemaSignature,
+      });
+      setMsg({ kind: 'ok', text: `Línea base «${b.name}» entrenada con ${fmtInt(b.rows)} filas. Ya puedes elegirla en «Inteligencia artificial».` });
+      onChanged();
+    } catch (e) {
+      setMsg({ kind: 'error', text: errorMessage(e) });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const remove = async (id: string): Promise<void> => {
+    try {
+      await api.deleteBaseline(id);
+      onChanged();
+    } catch (e) {
+      setMsg({ kind: 'error', text: errorMessage(e) });
+    }
+  };
+
+  return (
+    <section className="card stack" aria-labelledby="bl-title">
+      <div>
+        <h3 id="bl-title">Aprender de datos históricos</h3>
+        <p className="muted small" style={{ margin: 0 }}>
+          Guarda este archivo como <b>línea base</b>: el modelo aprende qué es «normal» en tu operación y, en próximos archivos, marca lo que se aleja de ese histórico.
+          Solo se envían números derivados (sin los textos originales).
+        </p>
+      </div>
+      {training ? (
+        <div className="row">
+          <input className="input" aria-label="Nombre de la línea base" value={name} onChange={(e) => setName(e.target.value)} style={{ minWidth: 240 }} />
+          <button className="btn primary" onClick={train} disabled={busy}>{busy ? 'Entrenando…' : 'Guardar como línea base'}</button>
+          <span className="small muted">{fmtInt(Math.min(training.rows, MAX_TRAIN_ROWS))} filas · {training.columns.length} características</span>
+        </div>
+      ) : (
+        <p className="small muted">Este análisis no generó muestra de entrenamiento (la IA estaba desactivada o el archivo tiene muy pocas columnas numéricas).</p>
+      )}
+      {msg && <p className={`alert small ${msg.kind === 'error' ? 'error' : ''}`} role="status">{msg.text}</p>}
+      {baselines.length > 0 && (
+        <div className="table-scroll">
+          <table className="plain">
+            <thead><tr><th>Línea base</th><th>Filas</th><th>Umbral</th><th /></tr></thead>
+            <tbody>
+              {baselines.map((b) => (
+                <tr key={b.id}>
+                  <td>{b.name}</td>
+                  <td className="mono">{fmtInt(b.rows)}</td>
+                  <td className="mono">{b.threshold.toFixed(3)}</td>
+                  <td style={{ textAlign: 'right' }}><button className="btn sm danger" onClick={() => remove(b.id)}>Eliminar</button></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </section>
+  );
+}
