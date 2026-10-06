@@ -1,0 +1,33 @@
+{
+  "name": "docu-sentinel-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Motor inteligente para detectar inconsistencias en documentos — frontend (Next.js 14) con motor de análisis en Web Workers",
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "dev": "node scripts/copy-pdf-worker.mjs && next dev",
+    "build": "node scripts/copy-pdf-worker.mjs && next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "verify:browser": "node scripts/browser-verify.mjs"
+  },
+  "dependencies": {
+    "next": "^14.2.15",
+    "pdfjs-dist": "^6.2.108",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "socket.io-client": "^4.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "esbuild": "^0.25.0",
+    "playwright": "^1.48.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}
