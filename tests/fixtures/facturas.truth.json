@@ -1,0 +1,21 @@
+{
+  "rows": 80,
+  "truth": [
+    {
+      "row": 10,
+      "type": "impossible_relation"
+    },
+    {
+      "row": 25,
+      "type": "type_mismatch"
+    },
+    {
+      "row": 40,
+      "type": "impossible_date"
+    },
+    {
+      "row": 55,
+      "type": "duplicate_exact"
+    }
+  ]
+}
