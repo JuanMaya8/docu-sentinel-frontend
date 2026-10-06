@@ -1,0 +1,11 @@
+export * from './types';
+export { analyzeFile, AnalysisAborted, compareFindings } from './pipeline/coordinator';
+export type { AnalysisSession, AnalyzeHooks, BaselineScore, TrainingSample } from './pipeline/coordinator';
+export { InlinePool, WebWorkerPool, attachEngineToWorkerScope } from './pipeline/pool';
+export type { WorkerPool } from './pipeline/pool';
+export { ShardEngine } from './pipeline/shardEngine';
+export { TYPE_LABELS_ES, RISK_LABELS_ES, fmtNum, fmtPercent } from './i18n/es';
+export { findingsToCsv, findingsToJson } from './exporters';
+export { generateDataset, type SynthKind, type SynthOptions, type SynthResult } from './synth';
+export { deserializeModel, serializeModel } from './ml/isolationForest';
+export { schemaSignature } from './ml/features';
