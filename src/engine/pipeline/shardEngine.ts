@@ -12,6 +12,7 @@ import { QuantileSketch } from '../sketch/ddsketch';
 import { CsvParser, normalizeHeader, sniffDelimiter } from '../parsers/csv';
 import { discoverNdjsonHeader, parseJsonText, parseNdjsonLine } from '../parsers/json';
 import { extractPdfTable, type PdfJsLike } from '../parsers/pdf';
+import { parseXlsx } from '../parsers/xlsx';
 import { BoundaryScanner, effectiveShardCount, rangesFrom } from './planner';
 import { MAX_JSON_BYTES, detectFormat, pickEncoding, readHead, readTextChunks } from './ingest';
 import { isNullToken, normalizeForNear } from '../util/text';
