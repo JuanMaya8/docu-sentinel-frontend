@@ -26,9 +26,17 @@ export default async function ReportDetailPage({ params }: { params: { id: strin
   let detail: AnalysisDetail;
   let findings: Page<Finding>;
   try {
+    const api = serverApi();
     [detail, findings] = await Promise.all([api.getAnalysis(params.id), api.getFindings(params.id, { sort: 'score:desc', limit: FINDINGS_LIMIT })]);
   } catch (e) {
     if (e instanceof ApiError && e.status === 404) notFound();
+    if (isAuthError(e)) {
+      return (
+        <div className="card">
+          <p style={{ margin: 0 }}>Este reporte es privado. <Link href={`/ingresar?next=/reportes/${encodeURIComponent(params.id)}`}>Ingresa</Link> con la cuenta que lo guardó.</p>
+        </div>
+      );
+    }
     return (
       <div className="alert error" role="alert">
         <b>No se pudo cargar el reporte.</b> {errorMessage(e)} <Link href="/reportes">Volver al historial</Link>
