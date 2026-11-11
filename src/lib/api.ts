@@ -140,8 +140,15 @@ async function send(path: string, init: RequestInit, token: string | undefined):
     } catch {
       /* not JSON */
     }
+    // an expired or revoked token: forget it so the UI asks to log in again
+    if (res.status === 401 && token && typeof window !== 'undefined' && code === 'AUTH_REQUIRED') clearSession();
     throw new ApiError(res.status, code, message);
   }
+  return res;
+}
+
+async function request<T>(path: string, init: RequestInit, token: string | undefined): Promise<T> {
+  const res = await send(path, init, token);
   if (res.status === 204) return undefined as T;
   return (await res.json()) as T;
 }
