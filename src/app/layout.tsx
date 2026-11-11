@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
 import './globals.css';
+import { AccountMenu } from '@/components/AccountMenu';
 import { NavLinks } from '@/components/NavLinks';
 import { THEME_BOOT_SCRIPT, ThemeToggle } from '@/components/ThemeToggle';
 
