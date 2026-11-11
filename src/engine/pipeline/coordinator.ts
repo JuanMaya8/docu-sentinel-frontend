@@ -42,6 +42,9 @@ export interface TrainingSample {
   matrix: Float64Array;
   rows: number;
   schemaSignature: string;
+  /** parameters used by the local model, so a baseline trained from this sample behaves the same in the AI */
+  contamination: number;
+  thresholdFloor: number;
 }
 
 export interface AnalyzeHooks {
