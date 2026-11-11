@@ -33,7 +33,7 @@ export interface BaselineScore {
   scores: number[];
   flags: boolean[];
   threshold: number;
-  contributions: Record<string, Array<{ field: string; message: string; deviation: number }>>;
+  contributions: Record<string, Array<{ field: string; message: string; deviation: number; kind?: string; expected?: number | null }>>;
 }
 
 export interface TrainingSample {
