@@ -2,11 +2,14 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { RealtimeRefresher } from '@/components/RealtimeRefresher';
 import { RiskChip } from '@/components/Summary';
-import { api, errorMessage, type AnalysisSummary } from '@/lib/api';
+import { errorMessage, isAuthError, type AnalysisSummary } from '@/lib/api';
+import { serverApi } from '@/lib/serverApi';
 import { fmtBytes, fmtDate, fmtInt, fmtMs } from '@/lib/format';
 
 export const metadata: Metadata = { title: 'Historial de reportes' };
 // SSR: always fresh data from the backend, rendered on the server for each request.
+// Render's free backend can take ~1 min to wake up: give the server render time (Vercel Hobby allows up to 60 s)
+export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
 const MODE: Record<string, string> = { main: 'Hilo principal', worker: '1 worker', pool: 'Workers' };
