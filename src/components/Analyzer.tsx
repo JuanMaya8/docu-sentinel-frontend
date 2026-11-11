@@ -320,8 +320,13 @@ export default function Analyzer() {
 
       {error && <p className="alert error" role="alert">{error}</p>}
 
-      {report && session && (
+      {report && (session || restored) && (
         <>
+          {restored && !session && (
+            <p className="alert small" role="status">
+              Reporte restaurado de tu visita anterior ({new Date(restored.savedAt).toLocaleString('es-CO')}). El archivo original no se guarda: para ver los registros originales o entrenar una línea base, vuelve a analizarlo.
+            </p>
+          )}
           {report.meta.warnings.map((w, i) => (<p key={i} className="alert warn small">{w}</p>))}
           {report.meta.truncated && <p className="alert warn small">Hay más hallazgos de los que se muestran: se conservaron los de mayor puntaje.</p>}
           {fellBack && <p className="alert warn small">El servicio de IA no respondió; se usó el modelo local de este navegador.</p>}
