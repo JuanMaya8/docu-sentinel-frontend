@@ -256,22 +256,33 @@ export async function analyzeFile(
   // ---------------------------------------------------------------- RESOLVE
   t = now();
   report('resolve', 0, 'Resolviendo duplicados y armando el reporte…');
+  // RESOLVE runs on the UI thread: in worker/pool modes it yields between steps (and inside the long loops)
+  // so a 500k-row report does not freeze the page in one long task. Main-thread mode never yields on purpose.
+  const yieldUi = mode === 'main' ? async (): Promise<void> => undefined : yieldToEventLoop;
   let findings: Finding[] = [];
   for (const d of detections) findings.push(...d.findings);
+  await yieldUi();
   const keyName = keyColumn !== null ? columns[keyColumn].name : null;
   if (options.detectors.duplicates) {
-    const dups = resolveDuplicates({ shards: detections.map((d) => d.hashes as ShardHashes), offsets, keyName });
+    const dupInput = { shards: detections.map((d) => d.hashes as ShardHashes), offsets, keyName };
+    const dups = mode === 'main' ? resolveDuplicates(dupInput) : await resolveDuplicatesAsync(dupInput, yieldUi);
+    await yieldUi();
     await attachRecordIds(pool, dups, offsets, shards.length);
     findings.push(...dups);
   }
   findings.push(...columnLevelFindings(profile, { types: options.detectors.types, suspicious: options.detectors.suspicious }));
   findings = dedupeMl(findings);
+  await yieldUi();
   findings.sort(compareFindings);
+  await yieldUi();
+  check();
 
   const byRisk: Record<RiskLevel, number> = { low: 0, medium: 0, high: 0, critical: 0 };
   const byType: Partial<Record<AnomalyType, number>> = {};
   const perRecord = new Map<number, { keep: number; count: number; id?: string }>();
-  for (const f of findings) {
+  for (let i = 0; i < findings.length; i++) {
+    if (i > 0 && i % RESOLVE_SLICE === 0) await yieldUi();
+    const f = findings[i];
     byRisk[f.risk]++;
     byType[f.type] = (byType[f.type] ?? 0) + 1;
     if (f.recordIndex !== null) {
