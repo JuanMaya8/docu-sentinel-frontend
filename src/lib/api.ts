@@ -114,14 +114,19 @@ export function socketOrigin(): string {
   return (process.env.NEXT_PUBLIC_API_URL ?? DEFAULT_URL).replace(/\/api\/v\d+\/?$/, '');
 }
 
-async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
+function headersFor(token: string | undefined, init: RequestInit): Record<string, string> {
   const headers: Record<string, string> = { Accept: 'application/json', ...(init.headers as Record<string, string> | undefined) };
   if (init.body) headers['Content-Type'] = 'application/json';
   const key = process.env.NEXT_PUBLIC_API_KEY;
   if (key) headers['X-API-Key'] = key;
+  if (token) headers.Authorization = `Bearer ${token}`;
+  return headers;
+}
+
+async function send(path: string, init: RequestInit, token: string | undefined): Promise<Response> {
   let res: Response;
   try {
-    res = await fetch(`${apiBaseUrl()}${path}`, { ...init, headers, cache: 'no-store' });
+    res = await fetch(`${apiBaseUrl()}${path}`, { ...init, headers: headersFor(token, init), cache: 'no-store' });
   } catch {
     throw new ApiError(0, 'BACKEND_UNREACHABLE', 'No se pudo conectar con el backend. ¿Está encendido en ' + apiBaseUrl() + '?');
   }
