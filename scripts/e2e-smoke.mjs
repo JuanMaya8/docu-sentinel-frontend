@@ -27,56 +27,109 @@ const check = (name, ok, detail = '') => {
 const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_PATH || undefined });
 const context = await browser.newContext({ acceptDownloads: true });
 const page = await context.newPage();
+page.on('dialog', (d) => void d.accept());
 const errors = [];
 page.on('pageerror', (e) => errors.push(String(e)));
 page.on('console', (m) => {
   if (m.type() !== 'error') return;
   const text = m.text();
-  if (/favicon|Failed to load resource|WebSocket/.test(text)) return;
+  // 401s while logged out and the backend health probe are expected; network noise is not a page error
+  if (/favicon|Failed to load resource|WebSocket|status of 401/.test(text)) return;
   errors.push(text);
 });
 
+const counter = () => page.locator('[aria-live="polite"]', { hasText: 'hallazgos' }).first();
+async function waitIdle() {
+  await page.getByTestId('sample-btn').and(page.locator(':enabled')).waitFor({ timeout: TIMEOUT });
+}
 async function analyzeSample() {
   await page.getByTestId('sample-btn').click();
   await page.getByRole('button', { name: 'Guardar en historial' }).waitFor({ timeout: TIMEOUT });
+  await waitIdle();
 }
 
 try {
-  // ------------------------------------------------------------------ analyze locally
+  // ------------------------------------------------------------------ accounts (only if the backend has them)
   await page.goto(`${BASE}/analizar`);
+  let accounts = false;
+  if (WITH_BACKEND) {
+    const loginLink = page.getByRole('link', { name: 'Ingresar' });
+    accounts = await loginLink.waitFor({ timeout: 8000 }).then(() => true, () => false);
+    if (accounts) {
+      await page.goto(`${BASE}/reportes`);
+      check('Sin sesión, el historial pide ingresar (es privado)', await page.getByText('Tu historial es privado').isVisible());
+      await page.goto(`${BASE}/ingresar?next=/analizar`);
+      await page.getByRole('tab', { name: 'Crear cuenta' }).click();
+      const email = `e2e.${Date.now()}@test.co`;
+      await page.getByLabel('Nombre (opcional)').fill('Prueba E2E');
+      await page.getByLabel('Correo').fill(email);
+      await page.getByLabel('Contraseña').fill('una-clave-larga');
+      await page.getByRole('button', { name: 'Crear cuenta' }).last().click();
+      await page.waitForURL(/\/analizar/, { timeout: 30_000 });
+      await page.getByRole('button', { name: 'Salir' }).waitFor({ timeout: 15_000 });
+      check('Crear cuenta e ingresar', true, email);
+    }
+  }
+
+  // ------------------------------------------------------------------ analyze locally
   await analyzeSample();
-  const counter = await page.locator('[aria-live="polite"]', { hasText: 'hallazgos' }).first().textContent();
-  check('Analizar datos de ejemplo muestra el reporte', /\d/.test(counter ?? ''), counter?.trim());
+  const text = await counter().textContent();
+  check('Analizar datos de ejemplo muestra el reporte', /\d/.test(text ?? ''), text?.trim());
   check('La tabla virtualizada de hallazgos es accesible', await page.getByRole('table', { name: 'Hallazgos' }).isVisible());
 
-  // filter + drawer
   await page.locator('#f-risk').selectOption('critical');
-  const filtered = await page.locator('[aria-live="polite"]', { hasText: 'hallazgos' }).first().textContent();
+  const filtered = await counter().textContent();
   check('El filtro por riesgo reduce la tabla', /de/.test(filtered ?? ''), filtered?.trim());
   await page.locator('#f-risk').selectOption('');
 
-  // export
+  // record drawer: opens, traps focus, Escape closes and returns focus
+  const firstRow = page.locator('.vt-row').first();
+  await firstRow.click();
+  const dialog = page.getByRole('dialog');
+  await dialog.waitFor();
+  for (let i = 0; i < 6; i++) await page.keyboard.press('Tab');
+  const focusInside = await page.evaluate(() => !!document.activeElement?.closest('[role="dialog"]'));
+  await page.keyboard.press('Escape');
+  await dialog.waitFor({ state: 'detached' });
+  check('El cajón del registro atrapa el foco y se cierra con Escape', focusInside);
+
   const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Descargar CSV' }).click()]);
   check('Exportar CSV descarga un archivo', download.suggestedFilename().endsWith('.csv'), download.suggestedFilename());
 
-  // theme toggle
   const toggle = page.locator('.theme-toggle');
-  await toggle.click();
-  const t1 = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
-  await toggle.click();
-  const t2 = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
-  await toggle.click();
-  const t3 = await page.evaluate(() => document.documentElement.getAttribute('data-theme'));
-  check('El interruptor de tema recorre claro → oscuro → automático', t1 === 'light' && t2 === 'dark' && t3 === null, `${t1} → ${t2} → ${t3}`);
+  const themes = [];
+  for (let i = 0; i < 3; i++) {
+    await toggle.click();
+    themes.push(await page.evaluate(() => document.documentElement.getAttribute('data-theme')));
+  }
+  check('El interruptor de tema recorre claro → oscuro → automático', themes.join() === 'light,dark,', themes.join(' → '));
+
+  // ------------------------------------------------------------------ restore after reload (IndexedDB)
+  await page.reload();
+  const restoreBtn = page.getByRole('button', { name: 'Restaurar' });
+  await restoreBtn.waitFor({ timeout: 15_000 });
+  await restoreBtn.click();
+  await page.getByRole('table', { name: 'Hallazgos' }).waitFor();
+  check('Tras recargar, el último análisis se restaura desde IndexedDB', await page.getByText('Reporte restaurado de tu visita anterior').isVisible());
+
+  // ------------------------------------------------------------------ Excel
+  const xlsx = buildXlsx({ sheets: [{ name: 'Facturas', rows: invoiceRows(400) }] });
+  await page.getByTestId('file-input').setInputFiles({ name: 'facturas.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: xlsx });
+  await page.getByRole('button', { name: 'Guardar en historial' }).waitFor({ timeout: TIMEOUT });
+  await waitIdle();
+  const xlsxText = await counter().textContent();
+  const negative = await page.locator('.vt-row', { hasText: 'Valor negativo' }).count();
+  check('Analizar un .xlsx (Excel) encuentra las anomalías sembradas', /\d/.test(xlsxText ?? '') && negative > 0, xlsxText?.trim());
 
   if (WITH_BACKEND) {
     // ---------------------------------------------------------------- save to history
+    await analyzeSample();
     await page.getByRole('button', { name: 'Guardar en historial' }).click();
     const open = page.getByRole('link', { name: 'Abrir reporte' });
     await open.waitFor({ timeout: 30_000 });
     check('Guardar en historial devuelve un enlace al reporte', (await open.getAttribute('href'))?.startsWith('/reportes/an_'));
 
-    // ---------------------------------------------------------------- baseline: train in the AI, then reuse it
+    // ---------------------------------------------------------------- baseline: train, reuse, retrain
     const name = `E2E ${Date.now()}`;
     await page.getByLabel('Nombre de la línea base').fill(name);
     await page.getByRole('button', { name: 'Guardar como línea base' }).click();
