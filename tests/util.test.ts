@@ -121,3 +121,29 @@ test('KmvSketch: exact when small, close when large, partition-invariant', () =>
   halves[0].merge(halves[1]);
   assert.deepEqual(halves[0].serialize(), big.serialize());
 });
+
+test('resolveDuplicatesAsync gives exactly the same findings as resolveDuplicates and yields while working', async () => {
+  const { resolveDuplicates, resolveDuplicatesAsync } = await import('../src/engine/detectors/duplicates');
+  const shard = (n: number, seed: number) => {
+    const exact = new Float64Array(n);
+    const key = new Float64Array(n);
+    const near = new Float64Array(n);
+    let x = seed;
+    for (let i = 0; i < n; i++) {
+      x = (x * 1103515245 + 12345) % 2147483648;
+      exact[i] = (x % 900) + 1; // plenty of collisions
+      key[i] = i % 7 === 0 ? 0 : (x % 1500) + 1;
+      near[i] = (x % 2000) + 1;
+    }
+    return { exact, key, near };
+  };
+  const input = { shards: [shard(2500, 1), shard(1800, 2), shard(3100, 3)], offsets: [0, 2500, 4300], keyName: 'id' };
+  const sync = resolveDuplicates(input);
+  let pauses = 0;
+  const asyncOut = await resolveDuplicatesAsync(input, async () => {
+    pauses++;
+  }, 1000);
+  assert.deepEqual(asyncOut, sync);
+  assert.ok(sync.length > 0);
+  assert.equal(pauses, Math.floor(7400 / 1000));
+});
