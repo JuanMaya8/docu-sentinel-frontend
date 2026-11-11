@@ -118,6 +118,11 @@ export class ShardEngine {
       const tab = await extractPdfTable(await file.arrayBuffer(), await this.options.loadPdfJs());
       return { format, delimiter: null, encoding, header: tab.header, ranges: null, rows: tab.rows, totalBytes: total, warnings: tab.warnings };
     }
+    if (format === 'xlsx') {
+      if (total > MAX_JSON_BYTES) throw new Error('El archivo de Excel supera 400 MB. Expórtalo a CSV para procesarlo por partes.');
+      const tab = await parseXlsx(await file.arrayBuffer());
+      return { format, delimiter: null, encoding: 'utf-8', header: tab.header, ranges: null, rows: tab.rows, totalBytes: total, warnings: tab.warnings };
+    }
     if (format === 'json') {
       if (total > MAX_JSON_BYTES) throw new Error('El JSON supera 400 MB. Conviértelo a NDJSON (un objeto por línea) para procesarlo por partes.');
       const tab = parseJsonText(new TextDecoder(encoding).decode(await file.arrayBuffer()));
