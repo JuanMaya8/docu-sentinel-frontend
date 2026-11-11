@@ -30,6 +30,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </Link>
             <div className="header-actions">
               <NavLinks />
+              <AccountMenu />
               <ThemeToggle />
             </div>
           </div>
