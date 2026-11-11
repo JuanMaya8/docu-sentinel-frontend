@@ -167,6 +167,14 @@ try {
     await page.locator('table.plain tbody tr a').first().click();
     await page.getByRole('table', { name: 'Hallazgos' }).waitFor({ timeout: 30_000 }).catch(() => undefined);
     check('El detalle de un reporte guardado carga sus hallazgos', page.url().includes('/reportes/an_'));
+    const [json] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Descargar JSON' }).click()]);
+    check('Descargar JSON del reporte guardado (con la sesión)', json.suggestedFilename().endsWith('.anomalias.json'), json.suggestedFilename());
+
+    if (accounts) {
+      await page.getByRole('button', { name: 'Salir' }).click();
+      await page.goto(`${BASE}/reportes`);
+      check('Al salir, el historial vuelve a ser privado', await page.getByText('Tu historial es privado').isVisible());
+    }
   }
 
   check('Sin errores de página ni de consola', errors.length === 0, errors.slice(0, 3).join(' | '));
