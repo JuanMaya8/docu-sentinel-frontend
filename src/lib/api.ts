@@ -53,7 +53,23 @@ export interface BaselineDto {
   trainedAt: string;
   schemaSignature?: string;
   thresholdFloor?: number;
+  /** 1 on creation, +1 on each retrain */
+  version?: number;
 }
+export interface HealthDto {
+  status: string;
+  ai: 'up' | 'down';
+  version: string;
+  /** true when the backend has user accounts (JWT_SECRET); then every report and baseline belongs to a user */
+  auth?: boolean;
+  store?: 'postgres' | 'files';
+}
+export interface AuthSessionDto {
+  token: string;
+  expiresAt: string;
+  user: SessionUser & { createdAt?: string };
+}
+type Matrix = Array<Array<number | null>>;
 export interface Page<T> {
   items: T[];
   total: number;
