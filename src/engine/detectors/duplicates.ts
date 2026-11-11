@@ -33,44 +33,67 @@ function make(
  * no matter how the file was split between workers (determinism).
  * Priority per row: exact > duplicate key > near duplicate.
  */
-export function resolveDuplicates(input: DuplicateInput): Finding[] {
+function createResolver(input: DuplicateInput): { visit: (s: number, i: number) => void; out: Finding[] } {
   const { shards, offsets, keyName } = input;
   const out: Finding[] = [];
   const firstExact = new Map<number, number>();
   const firstKey = new Map<number, number>();
   const firstNear = new Map<number, number>();
   const idOf = input.recordIdOf;
-  for (let s = 0; s < shards.length; s++) {
+  const visit = (s: number, i: number): void => {
     const sh = shards[s];
-    const base = offsets[s];
-    for (let i = 0; i < sh.exact.length; i++) {
-      const g = base + i;
-      const hExact = sh.exact[i];
-      const firstE = firstExact.get(hExact);
-      if (firstE !== undefined) {
-        out.push(make(g, 'duplicate_exact', 75, null, es.duplicateExact(firstE + 1), idOf?.(g)));
-        continue;
+    const g = offsets[s] + i;
+    const hExact = sh.exact[i];
+    const firstE = firstExact.get(hExact);
+    if (firstE !== undefined) {
+      out.push(make(g, 'duplicate_exact', 75, null, es.duplicateExact(firstE + 1), idOf?.(g)));
+      return;
+    }
+    firstExact.set(hExact, g);
+    const hKey = sh.key ? sh.key[i] : 0;
+    if (hKey !== 0) {
+      const firstK = firstKey.get(hKey);
+      if (firstK !== undefined) {
+        out.push(make(g, 'duplicate_key', 85, keyName, es.duplicateKey(keyName ?? 'identificador', firstK + 1), idOf?.(g)));
+        return;
       }
-      firstExact.set(hExact, g);
-      const hKey = sh.key ? sh.key[i] : 0;
-      if (hKey !== 0) {
-        const firstK = firstKey.get(hKey);
-        if (firstK !== undefined) {
-          out.push(make(g, 'duplicate_key', 85, keyName, es.duplicateKey(keyName ?? 'identificador', firstK + 1), idOf?.(g)));
-          continue;
-        }
-        firstKey.set(hKey, g);
+      firstKey.set(hKey, g);
+    }
+    const hNear = sh.near ? sh.near[i] : 0;
+    if (hNear !== 0) {
+      const firstN = firstNear.get(hNear);
+      if (firstN !== undefined) {
+        out.push(make(g, 'duplicate_near', 55, null, es.duplicateNear(firstN + 1), idOf?.(g)));
+        return;
       }
-      const hNear = sh.near ? sh.near[i] : 0;
-      if (hNear !== 0) {
-        const firstN = firstNear.get(hNear);
-        if (firstN !== undefined) {
-          out.push(make(g, 'duplicate_near', 55, null, es.duplicateNear(firstN + 1), idOf?.(g)));
-          continue;
-        }
-        firstNear.set(hNear, g);
-      }
+      firstNear.set(hNear, g);
+    }
+  };
+  return { visit, out };
+}
+
+export function resolveDuplicates(input: DuplicateInput): Finding[] {
+  const r = createResolver(input);
+  for (let s = 0; s < input.shards.length; s++) {
+    const n = input.shards[s].exact.length;
+    for (let i = 0; i < n; i++) r.visit(s, i);
+  }
+  return r.out;
+}
+
+/**
+ * Same result as `resolveDuplicates` (same global visiting order), but awaits `pause()` every `every` rows so the UI
+ * thread can paint and handle input while hundreds of thousands of rows are resolved.
+ */
+export async function resolveDuplicatesAsync(input: DuplicateInput, pause: () => Promise<void>, every = 100_000): Promise<Finding[]> {
+  const r = createResolver(input);
+  let visited = 0;
+  for (let s = 0; s < input.shards.length; s++) {
+    const n = input.shards[s].exact.length;
+    for (let i = 0; i < n; i++) {
+      r.visit(s, i);
+      if (++visited % every === 0) await pause();
     }
   }
-  return out;
+  return r.out;
 }
