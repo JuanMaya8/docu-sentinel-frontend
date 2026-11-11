@@ -176,11 +176,11 @@ El detalle para continuar está en **`AI_CONTEXT.md`**.
 * PDF: solo texto seleccionable con columnas alineadas; sin OCR.
 * JSON: se carga completo en memoria (límite de seguridad de 400 MB); CSV/NDJSON se leen por bloques.
 * Archivos de varios cientos de MB dependen de la memoria del navegador (las columnas se guardan en el worker).
-* Excel (`.xlsx`) no está soportado todavía: expórtalo a CSV.
+* Excel: se lee **la primera hoja** de `.xlsx`/`.xlsm` (valores cacheados de fórmulas, fechas por formato de celda); `.xls` (97-2003) no está soportado.
 * La ganancia de velocidad depende de los núcleos reales; el hilo principal sirve de comparación, no de modo recomendado.
 
-## Despliegue (más adelante)
-* **Vercel / Netlify**: importa el repo; variables `NEXT_PUBLIC_API_URL` (URL pública del backend + `/api/v1`) y `API_URL` (la misma, usada por SSR). El script `build` copia el worker de pdf.js a `public/`.
+## Despliegue (Vercel)
+* **Vercel**: ver [`DEPLOY.md`](DEPLOY.md). Importa el repo (`vercel.json` incluido); variables `NEXT_PUBLIC_API_URL` (URL pública del backend + `/api/v1`) y `API_URL` (la misma, usada por SSR). El script `build` copia el worker de pdf.js a `public/`.
 * **Docker**: `Dockerfile` multi-etapa con `output: 'standalone'` (usa `--build-arg NEXT_PUBLIC_API_URL=…`).
 * En el backend define `CORS_ORIGINS` con el dominio del frontend.
 
