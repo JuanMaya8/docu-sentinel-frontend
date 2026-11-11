@@ -233,8 +233,22 @@ export default function Analyzer() {
       const cut = report.findings.length > MAX_SAVED_FINDINGS ? ` Se guardaron los ${fmtInt(MAX_SAVED_FINDINGS)} hallazgos de mayor puntaje.` : '';
       setSaveMsg({ kind: 'ok', text: `Reporte guardado en el historial.${cut}`, id: saved.id });
     } catch (e) {
-      setSaveMsg({ kind: 'error', text: errorMessage(e) });
+      setSaveMsg({ kind: 'error', text: errorMessage(e), login: isAuthError(e) });
     }
+  };
+
+  const restore = (): void => {
+    if (!previous) return;
+    setRestored(previous);
+    setPrevious(null);
+    setPhase('idle');
+    setSelected(null);
+    setSaveMsg(null);
+    setTraining(undefined);
+  };
+  const discard = (): void => {
+    setPrevious(null);
+    void clearLastAnalysis();
   };
 
   const defaultBaselineName = `${report?.meta.fileName.replace(/\.[^.]+$/, '') ?? 'Histórico'} · ${new Date().toLocaleDateString('es-CO')}`;
