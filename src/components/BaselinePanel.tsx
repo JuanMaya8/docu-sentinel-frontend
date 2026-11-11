@@ -87,13 +87,14 @@ export function BaselinePanel({ training, defaultName, baselines, onChanged }: {
       {baselines.length > 0 && (
         <div className="table-scroll">
           <table className="plain">
-            <thead><tr><th>Línea base</th><th>Filas</th><th>Umbral</th><th /></tr></thead>
+            <thead><tr><th>Línea base</th><th>Filas</th><th>Umbral</th><th>Piso</th><th /></tr></thead>
             <tbody>
               {baselines.map((b) => (
                 <tr key={b.id}>
                   <td>{b.name}</td>
                   <td className="mono">{fmtInt(b.rows)}</td>
                   <td className="mono">{b.threshold.toFixed(3)}</td>
+                  <td className="mono">{b.thresholdFloor !== undefined ? b.thresholdFloor.toFixed(2) : '—'}</td>
                   <td style={{ textAlign: 'right' }}><button className="btn sm danger" onClick={() => remove(b.id)}>Eliminar</button></td>
                 </tr>
               ))}
