@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 import { socketOrigin } from '@/lib/api';
+import { SESSION_EVENT, getStoredToken } from '@/lib/session';
 
 const EVENTS = ['analysis.saved', 'analysis.deleted', 'baseline.trained', 'baseline.deleted'];
 
