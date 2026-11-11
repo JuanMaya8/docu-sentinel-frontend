@@ -18,12 +18,14 @@ export default async function ReportsPage() {
   let items: AnalysisSummary[] = [];
   let total = 0;
   let error: string | null = null;
+  let needsLogin = false;
   try {
-    const page = await api.listAnalyses(50, 0);
+    const page = await serverApi().listAnalyses(50, 0);
     items = page.items;
     total = page.total;
   } catch (e) {
-    error = errorMessage(e);
+    if (isAuthError(e)) needsLogin = true;
+    else error = errorMessage(e);
   }
 
   return (
