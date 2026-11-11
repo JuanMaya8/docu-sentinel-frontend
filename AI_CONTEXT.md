@@ -55,7 +55,7 @@ Nuevo en v0.2.0:
 * [ ] Autenticación (el backend hoy usa `X-API-Key` opcional; `NEXT_PUBLIC_API_KEY` queda visible en el navegador → solo demos).
 * [ ] Reentrenar/actualizar una línea base existente (hoy se crea nueva).
 * [ ] Persistir en `IndexedDB` el último análisis para sobrevivir a recargas (el archivo original no se guarda).
-* [ ] Tema claro/oscuro con interruptor (hoy sigue `prefers-color-scheme`).
+* [x] Tema claro/oscuro con interruptor (`ThemeToggle`, automático/claro/oscuro, guardado en `localStorage`).
 
 **Prioridad baja**
 * [ ] Internacionalización (hoy solo es-CO; los textos del motor están centralizados en `src/engine/i18n/es.ts`).
