@@ -92,14 +92,14 @@ export function RecordDrawer({ finding, findings, loadRecord, onClose }: {
           <>
             <h3 style={{ marginTop: 22 }}>Registro original</h3>
             {!loadRecord && <p className="small muted">El archivo original no se guarda; el detalle solo está disponible mientras el análisis sigue abierto en este navegador.</p>}
-            {loadRecord && !record && !error && <div className="skeleton" style={{ height: 120 }} />}
-            {error && <p className="alert error small">{error}</p>}
+            {loadRecord && !record && !error && <div className="skeleton" style={{ height: 120 }} aria-label="Cargando registro" role="status" />}
+            {error && <p className="alert error small" role="alert">{error}</p>}
             {record && (
-              <table className="kvtable">
+              <table className="kvtable" aria-label="Valores del registro original; los campos con hallazgos están resaltados">
                 <tbody>
                   {record.header.map((h, i) => (
                     <tr key={i} className={affected.has(h) ? 'hl' : undefined}>
-                      <td>{h}</td>
+                      <th scope="row" style={{ fontWeight: affected.has(h) ? 700 : 500, textAlign: 'left' }}>{h}{affected.has(h) && <span className="sr-only"> (con hallazgos)</span>}</th>
                       <td>{record.values[i] === '' ? <span className="muted">(vacío)</span> : record.values[i]}</td>
                     </tr>
                   ))}
