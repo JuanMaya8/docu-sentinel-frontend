@@ -51,6 +51,7 @@ export interface BaselineDto {
   threshold: number;
   trainedAt: string;
   schemaSignature?: string;
+  thresholdFloor?: number;
 }
 export interface Page<T> {
   items: T[];
