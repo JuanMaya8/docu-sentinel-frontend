@@ -28,7 +28,7 @@ export interface PlanResult {
   delimiter: string | null;
   encoding: string;
   header: string[];
-  /** byte ranges for streamable formats (csv/tsv/ndjson); null for json/pdf */
+  /** byte ranges for streamable formats (csv/tsv/ndjson); null for json/pdf/xlsx */
   ranges: Array<{ start: number; end: number }> | null;
   /** parsed rows for non-streamable formats (json/pdf) */
   rows: string[][] | null;
