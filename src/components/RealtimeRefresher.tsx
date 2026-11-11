@@ -36,7 +36,7 @@ export function RealtimeRefresher() {
       clearTimeout(timer);
       socket.close();
     };
-  }, [router]);
+  }, [router, token]);
 
   return (
     <span className="chip" title="Conexión en tiempo real con el backend" aria-live="polite">
