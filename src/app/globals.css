@@ -71,6 +71,10 @@ button, input, select { font: inherit; color: inherit; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 750; letter-spacing: -0.02em; color: var(--ink); text-decoration: none; }
 .brand svg { color: var(--accent); }
 .nav { display: flex; gap: 4px; }
+.header-actions { display: flex; align-items: center; gap: 8px; }
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
+.theme-toggle:hover { color: var(--ink); border-color: var(--accent); }
+.theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .nav a { padding: 7px 12px; border-radius: 9px; color: var(--muted); text-decoration: none; font-weight: 550; }
 .nav a:hover, .nav a[aria-current='page'] { background: var(--surface-2); color: var(--ink); }
 main { padding: 28px 0 80px; }
