@@ -228,7 +228,10 @@ export async function analyzeFile(
         report('features', 0.8, 'Entrenando el modelo de anomalías…');
         // trained inside a worker (it is CPU-heavy): the UI thread never runs it unless the user chose "main thread" mode
         forest = await pool.call(0, 'train', { matrix, rows, columns: columnsF, kinds, contamination: CONTAMINATION[options.sensitivity], thresholdFloor: THRESHOLD_FLOOR[options.sensitivity], seed: options.ml.seed });
-        hooks.onTrainingSample?.({ columns: columnsF, kinds, matrix, rows, schemaSignature: schemaSignature(columnsF) });
+        hooks.onTrainingSample?.({
+          columns: columnsF, kinds, matrix, rows, schemaSignature: schemaSignature(columnsF),
+          contamination: CONTAMINATION[options.sensitivity], thresholdFloor: THRESHOLD_FLOOR[options.sensitivity],
+        });
       }
     }
   }
