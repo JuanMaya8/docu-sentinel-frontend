@@ -112,7 +112,7 @@ export default function Analyzer() {
     if (settings.mlMode === 'baseline') {
       const b = baselines.find((x) => x.id === settings.baselineId);
       if (!b) return 'Elige una línea base histórica o cambia el modo de IA.';
-      baseline = { id: b.id, name: b.name, columns: b.columns, kinds: b.kinds as BaselineRef['kinds'] };
+      baseline = { id: b.id, name: b.name, columns: b.columns, kinds: b.kinds as BaselineRef['kinds'], schemaSignature: b.schemaSignature };
     }
     const keys = settings.keyColumns.split(',').map((s) => s.trim()).filter(Boolean);
     return {
