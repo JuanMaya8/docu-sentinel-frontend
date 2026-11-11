@@ -44,6 +44,8 @@ export function BaselinePanel({ training, defaultName, baselines, onChanged }: {
         kinds: training.kinds,
         matrix: toMatrix(training),
         schemaSignature: training.schemaSignature,
+        contamination: training.contamination,
+        thresholdFloor: training.thresholdFloor,
       });
       setMsg({ kind: 'ok', text: `Línea base «${b.name}» entrenada con ${fmtInt(b.rows)} filas. Ya puedes elegirla en «Inteligencia artificial».` });
       onChanged();
