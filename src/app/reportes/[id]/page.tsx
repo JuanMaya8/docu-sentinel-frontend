@@ -3,16 +3,19 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SavedReportView } from '@/components/SavedReportView';
 import { Summary } from '@/components/Summary';
-import { ApiError, api, errorMessage, type AnalysisDetail, type Page } from '@/lib/api';
+import { ApiError, errorMessage, isAuthError, type AnalysisDetail, type Page } from '@/lib/api';
+import { serverApi } from '@/lib/serverApi';
 import type { Finding } from '@/engine';
 import { fmtBytes, fmtDate, fmtMs } from '@/lib/format';
 
+// Render's free backend can take ~1 min to wake up: give the server render time (Vercel Hobby allows up to 60 s)
+export const maxDuration = 60;
 export const dynamic = 'force-dynamic'; // SSR on every request
 const FINDINGS_LIMIT = 5000;
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   try {
-    const a = await api.getAnalysis(params.id);
+    const a = await serverApi().getAnalysis(params.id);
     return { title: `Reporte · ${a.fileName}` };
   } catch {
     return { title: 'Reporte' };
