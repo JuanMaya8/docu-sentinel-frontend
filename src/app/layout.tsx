@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 import './globals.css';
 import { NavLinks } from '@/components/NavLinks';
+import { THEME_BOOT_SCRIPT, ThemeToggle } from '@/components/ThemeToggle';
 
 export const metadata: Metadata = {
   title: { default: 'Docu Sentinel — Motor de inconsistencias en documentos', template: '%s · Docu Sentinel' },
