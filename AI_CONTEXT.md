@@ -43,10 +43,10 @@ Nuevo en v0.2.0:
 ## 2. Qué falta para llegar al 100 %
 
 **Prioridad alta**
-* [ ] Pasar el punto 1–4 de arriba y corregir lo que falle (es la deuda principal: la capa Next no se ejecutó).
-* [ ] **Mover la fase RESOLVE a un worker** (`coordinator.ts`, bloque RESOLVE: `resolveDuplicates`, `findings.sort`, conteos). Hoy congela ~450 ms con 500 000 filas. Alternativa: trocear con `scheduler.yield()`.
-* [ ] **Paridad con la IA Python** (`docu-sentinel-ai/app/engine.py`): el motor local usa (a) `thresholdFloor` por sensibilidad (0.65/0.60/0.55), (b) modelo de **coherencia** (Mahalanobis recortado, `src/engine/ml/coherence.ts`), (c) escala **log** para positivos asimétricos (`shouldLog`). La IA solo tiene robust-scale + IF + guarda de extrapolación. En modo línea base eso significa menos recall en relaciones rotas. Porta (a)–(c) a Python, agrega `threshold_floor` al contrato (`TrainRequest`, `DetectRequest`) en **los 3 repos** y pruebas.
-* [ ] Pruebas E2E de la UI (Playwright contra `next start` con backend simulado): subir archivo, filtrar tabla, abrir cajón, exportar.
+* [x] Pasar el punto 1–4 de arriba y corregir lo que falle.
+* [x] ~~**Mover la fase RESOLVE a un worker**~~ → resuelto troceando con cesiones al event loop (`yieldToEventLoop`). (`coordinator.ts`, bloque RESOLVE: `resolveDuplicates`, `findings.sort`, conteos). Hoy congela ~450 ms con 500 000 filas. Alternativa: trocear con `scheduler.yield()`.
+* [x] **Paridad con la IA Python** (hecho en v0.2.0 en los 3 repos) (`docu-sentinel-ai/app/engine.py`): el motor local usa (a) `thresholdFloor` por sensibilidad (0.65/0.60/0.55), (b) modelo de **coherencia** (Mahalanobis recortado, `src/engine/ml/coherence.ts`), (c) escala **log** para positivos asimétricos (`shouldLog`). La IA solo tiene robust-scale + IF + guarda de extrapolación. En modo línea base eso significa menos recall en relaciones rotas. Porta (a)–(c) a Python, agrega `threshold_floor` al contrato (`TrainRequest`, `DetectRequest`) en **los 3 repos** y pruebas.
+* [x] Pruebas E2E de la UI (`npm run test:e2e`, Playwright contra `next start` con backend e IA reales).
 * [ ] Accesibilidad: revisar con lector de pantalla la tabla virtualizada (`role=table`, `aria-rowindex`) y el cajón (foco atrapado).
 
 **Prioridad media**
