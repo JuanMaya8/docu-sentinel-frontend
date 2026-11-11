@@ -59,14 +59,14 @@ Nuevo en v0.2.0:
 * [x] ~~**Mover la fase RESOLVE a un worker**~~ → resuelto troceando con cesiones al event loop (`yieldToEventLoop`). (`coordinator.ts`, bloque RESOLVE: `resolveDuplicates`, `findings.sort`, conteos). Hoy congela ~450 ms con 500 000 filas. Alternativa: trocear con `scheduler.yield()`.
 * [x] **Paridad con la IA Python** (hecho en v0.2.0 en los 3 repos) (`docu-sentinel-ai/app/engine.py`): el motor local usa (a) `thresholdFloor` por sensibilidad (0.65/0.60/0.55), (b) modelo de **coherencia** (Mahalanobis recortado, `src/engine/ml/coherence.ts`), (c) escala **log** para positivos asimétricos (`shouldLog`). La IA solo tiene robust-scale + IF + guarda de extrapolación. En modo línea base eso significa menos recall en relaciones rotas. Porta (a)–(c) a Python, agrega `threshold_floor` al contrato (`TrainRequest`, `DetectRequest`) en **los 3 repos** y pruebas.
 * [x] Pruebas E2E de la UI (`npm run test:e2e`, Playwright contra `next start` con backend e IA reales).
-* [ ] Accesibilidad: revisar con lector de pantalla la tabla virtualizada (`role=table`, `aria-rowindex`) y el cajón (foco atrapado).
+* [x] (parcial, v0.3.0: foco atrapado/devuelto en el cajón, `th scope=row`, estados con `role=status/alert`; falta prueba con lector de pantalla real) Accesibilidad: revisar con lector de pantalla la tabla virtualizada (`role=table`, `aria-rowindex`) y el cajón (foco atrapado).
 
 **Prioridad media**
-* [ ] `.xlsx` (usar `exceljs`/SheetJS en un worker y reutilizar el parser tabular).
+* [x] (v0.3.0, lector propio sin dependencias) `.xlsx` (usar `exceljs`/SheetJS en un worker y reutilizar el parser tabular).
 * [ ] PDF escaneados: OCR opcional (Tesseract.js en worker) y tablas con celdas combinadas.
-* [ ] Autenticación (el backend hoy usa `X-API-Key` opcional; `NEXT_PUBLIC_API_KEY` queda visible en el navegador → solo demos).
-* [ ] Reentrenar/actualizar una línea base existente (hoy se crea nueva).
-* [ ] Persistir en `IndexedDB` el último análisis para sobrevivir a recargas (el archivo original no se guarda).
+* [x] (v0.3.0) Autenticación (el backend hoy usa `X-API-Key` opcional; `NEXT_PUBLIC_API_KEY` queda visible en el navegador → solo demos).
+* [x] Reentrenar/actualizar una línea base existente (v0.3.0).
+* [x] (v0.3.0) Persistir en `IndexedDB` el último análisis para sobrevivir a recargas (el archivo original no se guarda).
 * [x] Tema claro/oscuro con interruptor (`ThemeToggle`, automático/claro/oscuro, guardado en `localStorage`).
 
 **Prioridad baja**
