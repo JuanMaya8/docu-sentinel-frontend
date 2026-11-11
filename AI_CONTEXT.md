@@ -3,7 +3,24 @@
 > Para la IA generadora de código que continuará este repo. Lee `README.md` (arquitectura y comandos) y `docs/CONTRACT.md` (contrato con backend e IA; idéntico en los 3 repos).
 > Reglas del proyecto: **código, identificadores y commits en inglés; todo texto visible al usuario en español (es-CO)**.
 
-## 1. Dónde quedó el trabajo (≈ 70 % del repo)
+## 0. Actualización (v0.2.0) — leer primero
+
+Lo marcado como «NO ejecutado» abajo **ya se ejecutó y funciona** (Windows, Node 22, Chromium 24 núcleos):
+`npm run typecheck` limpio · `npm test` → 41 OK · `npm run build` OK · `npm run verify:browser` OK ·
+`npm run test:e2e` → 12/12 con backend (`node dist/main.js`) + IA (uvicorn) reales.
+
+Nuevo en v0.2.0:
+* `TrainingSample` lleva `contamination` y `thresholdFloor` de la sensibilidad; `BaselinePanel` los envía al backend
+  (la IA Python ya soporta `threshold_floor`, escala log y coherencia → paridad del modelo).
+* `BaselineRef.schemaSignature` + `api.scoreBaseline(id, matrix, topK, schemaSignature)` → el backend responde
+  `422 SCHEMA_MISMATCH` si la línea base cambió de esquema (el coordinador cae al modelo local y lo avisa).
+* RESOLVE (`coordinator.ts`) cede el hilo con `yieldToEventLoop()`: `resolveDuplicatesAsync` cada 100 000 filas, entre pasos y cada `RESOLVE_SLICE` hallazgos en
+  modos `worker`/`pool` (no en `main`). Determinismo intacto.
+* `components/ThemeToggle.tsx` (+ `THEME_BOOT_SCRIPT` en `<head>` del layout) usa los `data-theme` que ya existían en CSS.
+* `scripts/e2e-smoke.mjs` (`npm run test:e2e`), con `CHROMIUM_PATH` opcional. **Ojo**: `NEXT_PUBLIC_API_URL` se fija en
+  el *build*; para E2E contra otro puerto hay que reconstruir.
+
+## 1. Dónde quedó el trabajo (histórico v0.1 — ≈ 70 % del repo)
 
 | Área | Estado | Cómo se comprobó |
 |---|---|---|
