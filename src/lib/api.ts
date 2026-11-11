@@ -140,11 +140,14 @@ export const api = {
   exportCsvUrl: (id: string) => `${apiBaseUrl()}/analyses/${encodeURIComponent(id)}/export.csv`,
   deleteAnalysis: (id: string) => request<void>(`/analyses/${encodeURIComponent(id)}`, { method: 'DELETE' }),
   listBaselines: () => request<BaselineDto[]>('/baselines'),
-  createBaseline: (dto: { name: string; columns: string[]; kinds?: string[]; matrix: Array<Array<number | null>>; schemaSignature?: string; contamination?: number; seed?: number }) =>
+  createBaseline: (dto: { name: string; columns: string[]; kinds?: string[]; matrix: Array<Array<number | null>>; schemaSignature?: string; contamination?: number; seed?: number; thresholdFloor?: number }) =>
     request<BaselineDto>('/baselines', { method: 'POST', body: JSON.stringify(dto) }),
   deleteBaseline: (id: string) => request<void>(`/baselines/${encodeURIComponent(id)}`, { method: 'DELETE' }),
-  scoreBaseline: (id: string, matrix: Array<Array<number | null>>, topK = 3) =>
-    request<AiScoreResponse>(`/baselines/${encodeURIComponent(id)}/score`, { method: 'POST', body: JSON.stringify({ matrix, explain: 'flagged', topK }) }),
+  scoreBaseline: (id: string, matrix: Array<Array<number | null>>, topK = 3, schemaSignature?: string) =>
+    request<AiScoreResponse>(`/baselines/${encodeURIComponent(id)}/score`, {
+      method: 'POST',
+      body: JSON.stringify({ matrix, explain: 'flagged', topK, ...(schemaSignature ? { schemaSignature } : {}) }),
+    }),
 };
 
 export function errorMessage(e: unknown): string {
