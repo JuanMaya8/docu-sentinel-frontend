@@ -3,7 +3,19 @@
 > Para la IA generadora de código que continuará este repo. Lee `README.md` (arquitectura y comandos) y `docs/CONTRACT.md` (contrato con backend e IA; idéntico en los 3 repos).
 > Reglas del proyecto: **código, identificadores y commits en inglés; todo texto visible al usuario en español (es-CO)**.
 
-## 0. Actualización (v0.2.0) — leer primero
+## 00. Novedades v0.3.0 (leer primero)
+* **XLSX**: `src/engine/parsers/xlsx.ts` (ZIP + `DecompressionStream('deflate-raw')` + XML por regex, porque `DOMParser`
+  no existe en workers). Entra al pipeline como el PDF (el `plan` devuelve `rows`). Formato `'xlsx'` en `FileFormat` y en
+  el backend. `scripts/xlsx-writer.mjs` genera libros de prueba (lo usan `tests/xlsx.test.ts` y el E2E).
+* **Cuentas**: `src/lib/session.ts` (localStorage + cookie `ds_token`), `createApi(getToken)` en `src/lib/api.ts`,
+  `src/lib/serverApi.ts` para server components (lee la cookie). `AccountMenu` se oculta si `/health` no trae
+  `auth:true`. Un 401 `AUTH_REQUIRED` con token borra la sesión. Las exportaciones del historial se descargan con
+  `api.downloadExport` (un enlace normal no llevaría el token).
+* `src/lib/lastAnalysis.ts`: último reporte en IndexedDB; el Analyzer ofrece «Restaurar» (sin registro original).
+* `BaselinePanel`: «Reentrenar con este archivo» si las columnas coinciden. `RecordDrawer`: foco atrapado y devuelto.
+* Despliegue: `vercel.json`, `DEPLOY.md`; `maxDuration = 60` en `/reportes` por el arranque en frío de Render.
+
+## 0. Actualización (v0.2.0)
 
 Lo marcado como «NO ejecutado» abajo **ya se ejecutó y funciona** (Windows, Node 22, Chromium 24 núcleos):
 `npm run typecheck` limpio · `npm test` → 41 OK · `npm run build` OK · `npm run verify:browser` OK ·
