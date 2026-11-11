@@ -19,11 +19,26 @@ cp .env.example .env.local        # ajusta NEXT_PUBLIC_API_URL si el backend no 
 npm run dev                       # http://localhost:3000
 ```
 
+Ejecuta `npm run dev` desde la carpeta `docu-sentinel-frontend`. Si en `http://localhost:3000` aparece una aplicación anterior aunque la terminal indique que este proyecto está listo, puede ser un *service worker* guardado por otro proyecto en el mismo origen. Debes limpiarlo en el mismo navegador y perfil donde ves el problema (por ejemplo, Chrome; limpiar el navegador integrado de VS Code no limpia Chrome). En Chrome abre las herramientas de desarrollador (`F12`) → **Application** → **Storage** → **Clear site data**, y luego recarga la página. Alternativamente, en la consola de esas herramientas puedes ejecutar:
+```js
+await Promise.all((await navigator.serviceWorker.getRegistrations()).map(registration => registration.unregister()));
+await Promise.all((await caches.keys()).map(key => caches.delete(key)));
+```
+Esto limpia datos locales de ese origen (`localhost`), no los archivos del proyecto. Los Web Workers de análisis corren dentro de la página y no sirven aplicaciones ni ocupan el puerto.
+
+Si Next.js avisa que el puerto 3000 ya está ocupado, revisa qué proceso lo usa en PowerShell:
+```powershell
+Get-NetTCPConnection -LocalPort 3000 -State Listen |
+  Select-Object LocalAddress, LocalPort, OwningProcess
+```
+Solo si confirmas que el PID corresponde a un servidor antiguo, puedes detenerlo con `Stop-Process -Id <PID>`. Si Next.js inicia en otro puerto, usa la URL que indique la terminal.
+
 | Comando | Qué hace |
 |---|---|
 | `npm run dev` | Desarrollo (copia antes el worker de pdf.js a `public/`) |
 | `npm run build && npm start` | Build de producción y servidor |
-| `npm test` | **39 pruebas** del motor (Node, sin navegador): parsers, detectores, determinismo, PDF |
+| `npm test` | **41 pruebas** del motor (Node, sin navegador): parsers, detectores, determinismo, PDF, parámetros de la línea base |
+| `npm run test:e2e` | **E2E con Playwright** contra la app real (`next start`) + backend + IA: analizar, filtrar, exportar, tema, guardar, línea base, `/reportes` en vivo. `E2E_BASE_URL=http://localhost:3000`; `E2E_SKIP_BACKEND=1` para solo la parte local |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run verify:browser` | Verificación en **Chromium real** (Playwright + esbuild): Workers, PDF, cancelación y **benchmark Hilo principal vs Workers**. `SIZES=50000,200000,500000 REPS=2 npm run verify:browser`. La primera vez: `npx playwright install chromium` |
 | `docker build -t docu-sentinel-frontend --build-arg NEXT_PUBLIC_API_URL=https://tu-backend/api/v1 .` | Imagen de producción (Next *standalone*) |
