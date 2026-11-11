@@ -163,11 +163,11 @@ docs/CONTRACT.md         contrato entre los 3 repos
 
 | Estado | Elemento |
 |---|---|
-| ✅ **Verificado** (39 pruebas ejecutadas; `tsc` sin errores en motor, workers y lib) | Motor completo, parsers CSV/TSV/JSON/NDJSON/PDF, detectores, IA local, determinismo 1–4 workers, exportación CSV/JSON |
-| ✅ **Verificado en Chromium real** | Web Workers, pdf.js (PDF de 2 páginas), cancelación, mismos hallazgos en los 3 modos, medición Hilo principal vs Workers |
-| ⚠️ **Escrito y tipado, pero no ejecutado** (en el entorno de creación no se podía instalar `next`/`react`: el registro de npm estaba bloqueado) | Toda la capa Next.js: `src/app/*`, `src/components/*`, `src/lib/api.ts`, `runner.ts`, `next.config.mjs`, `Dockerfile`, CI |
-| ⚠️ **Riesgos conocidos al primer `npm run build`** | (1) `new Worker(new URL(...))` + `import('pdfjs-dist')` dentro del worker con webpack (si falla, usar `pdfjs-dist/legacy/build/pdf.mjs`); (2) tipos de React/Next (solo se comprobó contra *stubs*); (3) conexión `socket.io` y SSR contra el backend real |
-| ❌ **No hecho** | Autenticación de usuarios, OCR para PDF escaneados, PDF sin tablas complejas (celdas combinadas), pruebas E2E de la UI, i18n a otros idiomas, métricas con datos reales, mover RESOLVE a un worker |
+| ✅ **Verificado** (41 pruebas; `tsc` limpio; `next build` OK) | Motor completo, parsers CSV/TSV/JSON/NDJSON/PDF, detectores, IA local, determinismo 1–4 workers, exportación CSV/JSON, capa Next.js (SSG/CSR/SSR) |
+| ✅ **Verificado en Chromium real** (`verify:browser`) | Web Workers, pdf.js, cancelación, mismos hallazgos en los 3 modos, medición Hilo principal vs Workers |
+| ✅ **Verificado E2E** (`test:e2e`, 12 comprobaciones, servicios reales) | Analizar, filtrar, exportar CSV, tema claro/oscuro, guardar en historial, entrenar línea base en la IA y reanalizar con ella (puntuación real en la IA), `/reportes` SSR con «En vivo» por socket.io, detalle de reporte |
+| ✅ **Nuevo en v0.2.0** | Interruptor de tema (automático → claro → oscuro, sin destello al cargar); RESOLVE cede el hilo; la línea base se entrena con el `thresholdFloor`/`contamination` de la sensibilidad elegida (paridad con la IA) y se puntúa enviando `schemaSignature` |
+| ❌ **No hecho** | Autenticación de usuarios, OCR para PDF escaneados, `.xlsx`, PDF con celdas combinadas, i18n a otros idiomas, métricas con datos reales, persistencia del último análisis en IndexedDB |
 
 El detalle para continuar está en **`AI_CONTEXT.md`**.
 
