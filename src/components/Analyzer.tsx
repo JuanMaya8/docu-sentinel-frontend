@@ -340,6 +340,7 @@ export default function Analyzer() {
             {saveMsg && (
               <span className={`small ${saveMsg.kind === 'error' ? '' : 'muted'}`} role="status" style={saveMsg.kind === 'error' ? { color: 'var(--critical)' } : undefined}>
                 {saveMsg.text} {saveMsg.id && <Link href={`/reportes/${saveMsg.id}`}>Abrir reporte</Link>}
+                {saveMsg.login && <Link href="/ingresar?next=/analizar">Ingresar</Link>}
               </span>
             )}
           </div>
