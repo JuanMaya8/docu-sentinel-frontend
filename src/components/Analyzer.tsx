@@ -179,6 +179,7 @@ export default function Analyzer() {
       setFinalFrames(frames);
       setRuns((r) => [...r, { id, file: name, rows: out.session.report.meta.rows, mode, workers: mode === 'main' ? 1 : mode === 'worker' ? 1 : workers, ms: performance.now() - t0, frames }]);
       setPhase('done');
+      void saveLastAnalysis(out.session.report);
     } catch (e) {
       monitor.stop();
       if (id !== runId.current) return;
