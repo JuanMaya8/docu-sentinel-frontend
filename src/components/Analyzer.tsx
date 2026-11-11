@@ -207,7 +207,7 @@ export default function Analyzer() {
     setPhase('idle');
   };
 
-  const report = session?.report;
+  const report = session?.report ?? restored?.report;
   const busy = phase === 'running' || phase === 'generating';
   const loadRecord = useMemo(() => (session ? (i: number) => session.getRecord(i) : undefined), [session]);
 
