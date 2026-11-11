@@ -18,6 +18,7 @@ import {
   type Progress,
   type TrainingSample,
   type WorkerPool,
+  schemaSignature,
 } from '@/engine';
 import { api } from './api';
 import { loadPdfJsInWorker } from './pdfjsLoader';
