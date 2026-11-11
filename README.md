@@ -122,18 +122,23 @@ Riesgo: puntaje 0–100 → bajo < 35 · medio < 60 · alto < 80 · crítico ≥
 
 ## Resultados medidos (Chromium real)
 
-`npm run verify:browser`, **Chromium headless con 2 núcleos lógicos** (entorno de pruebas de la sesión de desarrollo), facturas CSV sintéticas, IA local activa, 1 repetición por celda. *Tu equipo con más núcleos mostrará más ganancia; corre el comando en tu máquina para tus números.*
+`npm run verify:browser`, **Chromium headless con 24 núcleos lógicos** (Windows, v0.2.0), facturas CSV sintéticas, IA local activa, 1 repetición por celda. *Corre el comando en tu máquina para tus números.*
 
-| Registros (MB) | Hilo principal | 1 worker | 2 workers | Pausa más larga de la UI (principal → 1 worker → 2 workers) |
+| Registros | Hilo principal | 1 worker | 2 workers | Pausa más larga de la UI (principal → 1 worker → 2 workers) |
 |---|---|---|---|---|
-| 50 000 (7,4 MB) | 2,6 s | 2,7 s | **2,2 s** | **2 570 ms** → 26 ms → 17 ms |
-| 200 000 (29,4 MB) | 7,4 s | 8,6 s | **5,8 s** | **7 346 ms** → 83 ms → 67 ms |
-| 500 000 (73,6 MB) | 18,8 s | 20,2 s | **12,8 s** | **18 703 ms** → 497 ms → 467 ms |
+| 50 000 | 1,9 s | 2,4 s | **1,5 s** | **1 836 ms** → 30 ms → 18 ms |
+| 200 000 | 5,6 s | 5,8 s | **3,5 s** | **5 536 ms** → 67 ms → 85 ms |
+| 500 000 | 12,0 s | 14,9 s | **7,7 s** | **11 983 ms** → 176 ms → 200 ms |
+
+Medición anterior (v0.1, 2 núcleos): 500 000 registros en 18,8 s / 20,2 s / 12,8 s con pausas de 18 703 → 497 → 467 ms.
 
 Lectura honesta:
-* **Fluidez**: en hilo principal la página queda **congelada todo el análisis** (0 fps, pausa = duración completa). Con workers se mantiene en **~59 fps** y la pausa más larga es de decenas de ms. Esta es la mejora grande y constante.
-* **Velocidad**: con 2 núcleos, 2 workers ganan **~1,3×–1,5×** frente al hilo principal. Un solo worker es algo *más lento* que el hilo principal (cuesta copiar mensajes) pero no congela nada. Las fases de entrenamiento y de mezcla final no se paralelizan.
-* La pausa de ~470 ms con 500 000 registros viene de la fase RESOLVE (mezcla final) que corre en el hilo principal. Mejora pendiente: moverla a un worker (ver `AI_CONTEXT.md`).
+* **Fluidez**: en hilo principal la página queda **congelada todo el análisis** (0–2 fps, pausa = duración completa). Con workers se mantiene en **~160 fps** (monitor de 165 Hz) y la pausa más larga es de decenas de ms (≤ 200 ms con 500 000 filas). Esta es la mejora grande y constante.
+* **Velocidad**: 2 workers ganan **~1,3×–1,6×** frente al hilo principal. Un solo worker es algo *más lento* que el hilo principal (cuesta copiar mensajes) pero no congela nada. Las fases de entrenamiento y de mezcla final no se paralelizan.
+* La pausa de ~450–600 ms con 500 000 registros venía de la fase RESOLVE (sobre todo `resolveDuplicates`, ~600 ms en una
+  sola tarea). Desde v0.2.0 RESOLVE **cede el hilo** (`scheduler.yield()` o `setTimeout`) cada 100 000 filas al resolver
+  duplicados, entre pasos y cada 50 000 hallazgos, en los modos con workers: la pausa bajó a ~200 ms con el **mismo
+  resultado** (hash idéntico). El resto viene de recibir mensajes grandes de los workers. El modo *Hilo principal* no cede, a propósito.
 * Los tres modos devolvieron **hallazgos idénticos** (mismo hash) en los tres tamaños.
 
 Calidad de detección en datos sintéticos con anomalías sembradas (30 000 facturas): duplicados exactos/por clave/casi idénticos, faltantes, tipos, fechas imposibles, negativos, relaciones imposibles, etiquetas y espacios: **25/25**; fuera de rango 24/25; montos bajo umbral 145/145; la IA recupera 200/200 de los registros multivariantes sembrados con ~75 % de precisión. Sobre filas *no* sembradas, las reglas generan < 0,2 % de falsos positivos; la IA marca ≈ 1 % por diseño (su presupuesto de contaminación). **Son datos sintéticos: no hay validación con datos reales.**
