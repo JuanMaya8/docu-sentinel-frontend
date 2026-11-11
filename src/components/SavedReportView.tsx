@@ -7,10 +7,19 @@ import { api, errorMessage } from '@/lib/api';
 import { RecordDrawer } from './RecordDrawer';
 import { ReportTable } from './ReportTable';
 
-export function SavedReportView({ id, findings, total, csvUrl }: { id: string; findings: Finding[]; total: number; csvUrl: string }) {
+export function SavedReportView({ id, fileName, findings, total }: { id: string; fileName: string; findings: Finding[]; total: number }) {
   const router = useRouter();
   const [selected, setSelected] = useState<Finding | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const download = async (kind: 'csv' | 'json'): Promise<void> => {
+    setError(null);
+    try {
+      await api.downloadExport(id, kind, `${fileName}.anomalias.${kind}`);
+    } catch (e) {
+      setError(errorMessage(e));
+    }
+  };
 
   const remove = async (): Promise<void> => {
     if (!window.confirm('¿Eliminar este reporte del historial? No se puede deshacer.')) return;
