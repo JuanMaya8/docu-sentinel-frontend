@@ -17,7 +17,8 @@ import {
   type SynthKind,
   type TrainingSample,
 } from '@/engine';
-import { api, errorMessage, type BaselineDto } from '@/lib/api';
+import { api, errorMessage, isAuthError, type BaselineDto } from '@/lib/api';
+import { clearLastAnalysis, loadLastAnalysis, saveLastAnalysis, type StoredAnalysis } from '@/lib/lastAnalysis';
 import { FrameMonitor, type FrameStats } from '@/lib/frameMonitor';
 import { downloadText, fmtBytes, fmtInt, fmtMs } from '@/lib/format';
 import { defaultWorkerCount, runAnalysis } from '@/lib/runner';
