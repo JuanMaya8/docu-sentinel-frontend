@@ -12,6 +12,9 @@ export function detectFormat(fileName: string, head: Uint8Array): FileFormat {
   if (head.length >= 4 && head[0] === 0x25 && head[1] === 0x50 && head[2] === 0x44 && head[3] === 0x46) return 'pdf';
   const ext = extensionOf(fileName);
   if (ext === 'pdf') return 'pdf';
+  // .xlsx is a ZIP container ("PK"); a ZIP with another extension is rejected later with a clear message
+  if (ext === 'xlsx' || ext === 'xlsm' || (head.length >= 4 && head[0] === 0x50 && head[1] === 0x4b && head[2] === 0x03 && head[3] === 0x04)) return 'xlsx';
+  if (ext === 'xls') throw new Error('Los archivos .xls (Excel 97-2003) no están soportados: guárdalo como .xlsx o CSV.');
   if (ext === 'tsv') return 'tsv';
   if (ext === 'ndjson' || ext === 'jsonl') return 'ndjson';
   const text = new TextDecoder('utf-8').decode(head.subarray(0, Math.min(head.length, 4096)));
