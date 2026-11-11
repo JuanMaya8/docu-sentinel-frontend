@@ -46,7 +46,13 @@ export default async function ReportsPage() {
         </div>
       )}
 
-      {!error && items.length === 0 && (
+      {needsLogin && (
+        <div className="card">
+          <p style={{ margin: 0 }}>Tu historial es privado. <Link href="/ingresar?next=/reportes">Ingresa</Link> para ver tus reportes guardados.</p>
+        </div>
+      )}
+
+      {!error && !needsLogin && items.length === 0 && (
         <div className="card">
           <p style={{ margin: 0 }}>Todavía no hay reportes. <Link href="/analizar">Analiza un archivo</Link> y pulsa «Guardar en historial».</p>
         </div>
