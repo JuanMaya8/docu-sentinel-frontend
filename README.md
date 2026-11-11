@@ -148,13 +148,13 @@ Calidad de detección en datos sintéticos con anomalías sembradas (30 000 fact
 ```
 src/
 ├── app/                 Next.js (layout, páginas, estilos)
-├── components/          Analyzer, ReportTable (virtualizada), LiveMeter, BenchmarkView, BaselinePanel, RecordDrawer…
+├── components/          Analyzer, ReportTable (virtualizada), LiveMeter, BenchmarkView, BaselinePanel, RecordDrawer, ThemeToggle…
 ├── lib/                 api.ts (cliente del backend) · runner.ts (modos y pool) · frameMonitor.ts · pdfjsLoader.ts
 ├── workers/shard.worker.ts
 └── engine/              Motor sin dependencias de navegador
     ├── parsers/ (csv, json, pdf) · profile/ · sketch/ (ddsketch, kmv) · detectors/ · ml/ (isolationForest, coherence, explain)
     ├── pipeline/ (coordinator, shardEngine, pool, planner, ingest, messages) · i18n/es.ts · synth.ts (datos de ejemplo con verdad conocida)
-scripts/                 browser-verify.mjs · verify/harness-entry.ts · copy-pdf-worker.mjs · make-pdf-fixture.py
+scripts/                 browser-verify.mjs · e2e-smoke.mjs · verify/harness-entry.ts · copy-pdf-worker.mjs · make-pdf-fixture.py
 tests/                   util, csv, pipeline (recall/precisión/determinismo), pdf (+ fixtures)
 docs/CONTRACT.md         contrato entre los 3 repos
 ```
