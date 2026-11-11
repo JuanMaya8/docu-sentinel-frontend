@@ -12,9 +12,18 @@ const EVENTS = ['analysis.saved', 'analysis.deleted', 'baseline.trained', 'basel
 export function RealtimeRefresher() {
   const router = useRouter();
   const [live, setLive] = useState(false);
+  const [token, setToken] = useState<string | undefined>();
 
   useEffect(() => {
-    const socket = io(`${socketOrigin()}/realtime`, { transports: ['websocket', 'polling'], reconnectionDelayMax: 10_000 });
+    const sync = (): void => setToken(getStoredToken());
+    sync();
+    window.addEventListener(SESSION_EVENT, sync);
+    return () => window.removeEventListener(SESSION_EVENT, sync);
+  }, []);
+
+  useEffect(() => {
+    // with accounts enabled the server only pushes this user's events (room per user); the token travels in `auth`
+    const socket = io(`${socketOrigin()}/realtime`, { transports: ['websocket', 'polling'], reconnectionDelayMax: 10_000, auth: token ? { token } : {} });
     let timer: ReturnType<typeof setTimeout> | undefined;
     const refresh = (): void => {
       clearTimeout(timer);
