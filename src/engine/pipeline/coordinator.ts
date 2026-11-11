@@ -350,6 +350,13 @@ export async function analyzeFile(
 
 // -------------------------------------------------------------------- helpers
 
+/** Gives the browser a chance to paint / handle input. Uses scheduler.yield() when available. */
+export function yieldToEventLoop(): Promise<void> {
+  const s = (globalThis as { scheduler?: { yield?: () => Promise<void> } }).scheduler;
+  if (s && typeof s.yield === 'function') return s.yield();
+  return new Promise((resolve) => setTimeout(resolve, 0));
+}
+
 function now(): number {
   return typeof performance !== 'undefined' ? performance.now() : Date.now();
 }
