@@ -35,9 +35,10 @@ export function SavedReportView({ id, fileName, findings, total }: { id: string;
   return (
     <div className="stack">
       <div className="row">
-        <a className="btn" href={csvUrl}>Descargar CSV completo</a>
+        <button className="btn" onClick={() => void download('csv')}>Descargar CSV completo</button>
+        <button className="btn" onClick={() => void download('json')}>Descargar JSON</button>
         <button className="btn danger" onClick={() => void remove()}>Eliminar reporte</button>
-        {total > findings.length && <span className="small muted">Se muestran los {findings.length.toLocaleString('es-CO')} hallazgos de mayor puntaje de {total.toLocaleString('es-CO')}; el CSV trae todos.</span>}
+        {total > findings.length && <span className="small muted">Se muestran los {findings.length.toLocaleString('es-CO')} hallazgos de mayor puntaje de {total.toLocaleString('es-CO')}; el CSV y el JSON traen todos.</span>}
       </div>
       {error && <p className="alert error" role="alert">{error}</p>}
       <ReportTable findings={findings} selected={selected} onOpen={setSelected} />
