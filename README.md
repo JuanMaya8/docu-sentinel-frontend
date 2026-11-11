@@ -6,7 +6,8 @@ Es el repositorio principal del sistema (junto a `docu-sentinel-backend` y `docu
 Sube un **CSV, TSV, JSON, NDJSON o PDF** (con tablas de texto) y obtén un reporte con **Registro · Tipo de anomalía · Nivel de riesgo · Campo afectado · Explicación**.
 Todo el análisis corre **en el navegador, en Web Workers**: el archivo no se sube a ningún servidor.
 
-> **Estado: avance funcional (v0.1.0)**, no el proyecto terminado. Lee *Qué está hecho y qué no* y `AI_CONTEXT.md`.
+> **Estado: v0.2.0 — funcional y verificado** (41 pruebas del motor, `next build`, Chromium real y E2E con backend + IA
+> reales). Lee *Qué está hecho y qué no* y `AI_CONTEXT.md`.
 
 ## Cómo ejecutarlo
 
