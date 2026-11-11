@@ -46,6 +46,12 @@ Solo si confirmas que el PID corresponde a un servidor antiguo, puedes detenerlo
 Rutas: `/` · `/analizar` · `/benchmark` · `/reportes` · `/reportes/[id]`.
 Para probar sin archivos, en **Analizar** pulsa «Generar y analizar» (datos de ejemplo con anomalías conocidas).
 
+### Demo rápida (sin backend ni archivos)
+1. `npm install` y `npm run dev`, luego abre http://localhost:3000/analizar.
+2. En «¿Sin archivo a la mano?» elige *Facturas (CSV)* y *50.000 filas*, y pulsa **Generar y analizar**.
+3. Revisa el resumen y la tabla de hallazgos; haz clic en una fila para ver el detalle del registro.
+   También puedes arrastrar tu propio `.csv`, `.json`, `.xlsx` o `.pdf`.
+
 ### Con todo el sistema (3 repos)
 ```bash
 # terminal 1 — IA                (docu-sentinel-ai)       uvicorn app.main:app --port 8000
@@ -184,13 +190,6 @@ El detalle para continuar está en **`AI_CONTEXT.md`**.
 * **Docker**: `Dockerfile` multi-etapa con `output: 'standalone'` (usa `--build-arg NEXT_PUBLIC_API_URL=…`).
 * En el backend define `CORS_ORIGINS` con el dominio del frontend.
 
-## Nombre de repositorio sugerido
-`docu-sentinel-frontend`
 
-```bash
-git init -b main && git add . && git commit -m "feat: avance inicial del frontend (motor + UI)"
-git remote add origin git@github.com:<tu-usuario>/docu-sentinel-frontend.git && git push -u origin main
-```
-
-## Notas para una IA generadora de código
-Lee **`AI_CONTEXT.md`** primero: dice qué está terminado, qué falta para el 100 %, las convenciones (código en inglés, textos al usuario en español), los comandos de verificación y las trampas conocidas.
+## Contexto técnico
+**`AI_CONTEXT.md`** resume el estado del proyecto: dice qué está terminado, qué falta para el 100 %, las convenciones (código en inglés, textos al usuario en español), los comandos de verificación y las trampas conocidas.
