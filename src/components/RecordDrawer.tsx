@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { TYPE_LABELS_ES, type Finding } from '@/engine';
 import { recordLabel } from '@/engine/exporters';
 import { RiskChip } from './Summary';
