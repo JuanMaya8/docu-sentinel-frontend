@@ -101,6 +101,15 @@ export default function Analyzer() {
     void loadBaselines();
   }, [loadBaselines]);
 
+  // offer the report of the previous visit (IndexedDB) — the original file is not stored, only the findings
+  useEffect(() => {
+    let alive = true;
+    void loadLastAnalysis().then((p) => alive && setPrevious(p));
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   useEffect(
     () => () => {
       abortRef.current?.abort();
