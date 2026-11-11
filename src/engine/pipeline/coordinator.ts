@@ -22,7 +22,7 @@ import {
 import { applyStats, buildColumnProfiles, mergePartials, pickKeyColumn } from '../profile/merge';
 import { acceptRelations, relationCandidates } from '../profile/relations';
 import { columnLevelFindings } from '../detectors/columnLevel';
-import { resolveDuplicates, type ShardHashes } from '../detectors/duplicates';
+import { resolveDuplicates, resolveDuplicatesAsync, type ShardHashes } from '../detectors/duplicates';
 import { buildFeatureSpec, schemaSignature, specFromBaseline } from '../ml/features';
 import type { ForestModel } from '../ml/isolationForest';
 import { riskFromScore } from '../i18n/es';
