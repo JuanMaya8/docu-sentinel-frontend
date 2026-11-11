@@ -266,6 +266,18 @@ export default function Analyzer() {
         <SettingsPanel value={settings} onChange={setSettings} baselines={baselines} baselinesError={baselinesError} disabled={busy} />
       </section>
 
+      {previous && !session && !restored && !busy && (
+        <section className="card restore-banner" aria-label="Análisis anterior">
+          <span className="small">
+            Tienes un análisis anterior de <b>{previous.report.meta.fileName}</b> ({fmtInt(previous.report.totalFindings)} hallazgos, {new Date(previous.savedAt).toLocaleString('es-CO')}).
+          </span>
+          <span className="row">
+            <button className="btn sm primary" onClick={restore}>Restaurar</button>
+            <button className="btn sm" onClick={discard}>Descartar</button>
+          </span>
+        </section>
+      )}
+
       <Dropzone onFile={(f) => void start(f, f.name)} disabled={busy} />
       <div className="row small">
         <span className="muted">¿Sin archivo a la mano? Genera datos de ejemplo con anomalías conocidas:</span>
