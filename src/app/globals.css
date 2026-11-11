@@ -75,6 +75,15 @@ button, input, select { font: inherit; color: inherit; }
 .theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); cursor: pointer; }
 .theme-toggle:hover { color: var(--ink); border-color: var(--accent); }
 .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.account { display: flex; align-items: center; gap: 8px; }
+.account-name { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 560px) { .account-name { display: none; } }
+.tabs { display: flex; gap: 4px; padding: 4px; background: var(--surface-2); border-radius: 10px; }
+.tab { flex: 1; padding: 8px 10px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-weight: 600; cursor: pointer; }
+.tab.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+.restore-banner { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; justify-content: space-between; }
 .nav a { padding: 7px 12px; border-radius: 9px; color: var(--muted); text-decoration: none; font-weight: 550; }
 .nav a:hover, .nav a[aria-current='page'] { background: var(--surface-2); color: var(--ink); }
 main { padding: 28px 0 80px; }
