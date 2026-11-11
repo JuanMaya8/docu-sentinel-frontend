@@ -27,7 +27,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </svg>
               Docu Sentinel
             </Link>
-            <NavLinks />
+            <div className="header-actions">
+              <NavLinks />
+              <ThemeToggle />
+            </div>
           </div>
         </header>
         <main>
