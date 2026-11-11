@@ -208,3 +208,30 @@ test('progress is reported and abort works', async () => {
   ac.abort();
   await assert.rejects(() => analyzeFile(new InlinePool(1), data.blob, 'x.csv', { now: NOW }, 'pool', { signal: ac.signal }), /cancelado/);
 });
+
+test('training sample carries the sensitivity parameters used by the local model (parity with the AI baseline)', async () => {
+  const data = generateDataset({ kind: 'invoices', rows: 3000, seed: 11 });
+  const expected = { low: [0.005, 0.65], medium: [0.01, 0.6], high: [0.03, 0.55] } as const;
+  for (const sensitivity of ['low', 'medium', 'high'] as const) {
+    let sample: { contamination: number; thresholdFloor: number; schemaSignature: string; columns: string[] } | undefined;
+    await analyzeFile(new InlinePool(2), data.blob, data.fileName, { now: NOW, sensitivity }, 'pool', {
+      onTrainingSample: (s) => {
+        sample = s;
+      },
+    });
+    assert.ok(sample, `no training sample for ${sensitivity}`);
+    assert.deepEqual([sample!.contamination, sample!.thresholdFloor], expected[sensitivity]);
+    assert.ok(sample!.schemaSignature.length > 0);
+  }
+});
+
+test('yieldToEventLoop resolves (setTimeout fallback when scheduler.yield is missing)', async () => {
+  const { yieldToEventLoop } = await import('../src/engine/pipeline/coordinator');
+  let ticked = false;
+  setTimeout(() => {
+    ticked = true;
+  }, 0);
+  await yieldToEventLoop();
+  await yieldToEventLoop();
+  assert.ok(ticked, 'other macrotasks must get a chance to run');
+});
