@@ -70,7 +70,7 @@ export function RecordDrawer({ finding, findings, loadRecord, onClose }: {
   return (
     <>
       <div className="drawer-backdrop" onClick={onClose} aria-hidden="true" />
-      <aside className="drawer" role="dialog" aria-modal="true" aria-label={`Detalle del ${recordLabel(finding)}`}>
+      <aside ref={panel} className="drawer" role="dialog" aria-modal="true" aria-label={`Detalle del ${recordLabel(finding)}`}>
         <div className="row spread">
           <h2 style={{ margin: 0 }}>{recordLabel(finding)}</h2>
           <button className="btn sm" onClick={onClose} autoFocus>Cerrar</button>
