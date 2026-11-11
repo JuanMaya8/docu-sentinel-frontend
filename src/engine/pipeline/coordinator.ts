@@ -69,6 +69,8 @@ const CONTAMINATION = { low: 0.005, medium: 0.01, high: 0.03 } as const;
 const THRESHOLD_FLOOR = { low: 0.65, medium: 0.6, high: 0.55 } as const;
 const PHASE_WEIGHT = { plan: 0.04, parse: 0.4, stats: 0.14, features: 0.1, detect: 0.27, resolve: 0.05 } as const;
 const REMOTE_CHUNK = 5000;
+/** findings processed between two yields to the event loop in the RESOLVE phase */
+const RESOLVE_SLICE = 50_000;
 const TRAINING_SAMPLE = 20000;
 
 export class AnalysisAborted extends Error {
