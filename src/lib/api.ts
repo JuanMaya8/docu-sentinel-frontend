@@ -71,7 +71,7 @@ export interface AiScoreResponse {
   threshold: number;
   scores: number[];
   flags: boolean[];
-  contributions: Record<string, Array<{ field: string; message: string; deviation: number }>>;
+  contributions: Record<string, Array<{ field: string; message: string; deviation: number; kind?: string; expected?: number | null }>>;
 }
 
 export class ApiError extends Error {
