@@ -54,7 +54,7 @@ export default async function ReportDetailPage({ params }: { params: { id: strin
         </p>
       </header>
       <Summary data={{ rows: detail.rows, columns: detail.columnCount, findingsCount: detail.findingsCount, recordsAffected: detail.recordsAffected, byRisk: detail.byRisk, byType: detail.byType }} />
-      <SavedReportView id={detail.id} findings={findings.items} total={findings.total} csvUrl={api.exportCsvUrl(detail.id)} />
+      <SavedReportView id={detail.id} fileName={detail.fileName} findings={findings.items} total={findings.total} />
     </div>
   );
 }
