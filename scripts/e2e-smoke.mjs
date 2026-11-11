@@ -144,10 +144,18 @@ try {
     const scored = page.waitForResponse((r) => /\/baselines\/bl_[0-9a-f]+\/score$/.test(r.url()) && r.request().method() === 'POST', { timeout: TIMEOUT });
     await page.getByTestId('sample-btn').click();
     const scoreRes = await scored.catch(() => null);
-    await page.getByTestId('sample-btn').and(page.locator(':enabled')).waitFor({ timeout: TIMEOUT });
+    await waitIdle();
     const alerts = (await page.locator('.alert').allTextContents()).join(' | ');
     const fallback = /no respondió|No se pudo usar la línea base|no es compatible|Elige una línea base/.test(alerts);
     check('Reanalizar con la línea base histórica puntúa en la IA', scoreRes?.status() === 200 && !fallback, scoreRes ? `HTTP ${scoreRes.status()}` : alerts.slice(0, 160));
+
+    await page.locator('#ml').selectOption('local');
+    await analyzeSample();
+    const row = page.locator('table.plain tr', { hasText: name });
+    await row.getByRole('button', { name: 'Reentrenar con este archivo' }).click();
+    const retrained = page.locator('.alert', { hasText: 'reentrenada' });
+    await retrained.waitFor({ timeout: TIMEOUT });
+    check('Reentrenar la línea base sube su versión', /versión 2/.test((await retrained.textContent()) ?? ''), (await retrained.textContent())?.trim().slice(0, 80));
 
     // ---------------------------------------------------------------- reports page (SSR + realtime)
     await page.goto(`${BASE}/reportes`);
