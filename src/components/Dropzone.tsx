@@ -2,7 +2,7 @@
 
 import { useRef, useState, type DragEvent } from 'react';
 
-const ACCEPT = '.csv,.tsv,.txt,.json,.ndjson,.jsonl,.pdf';
+const ACCEPT = '.csv,.tsv,.txt,.json,.ndjson,.jsonl,.pdf,.xlsx,.xlsm';
 
 export function Dropzone({ onFile, disabled }: { onFile: (f: File) => void; disabled?: boolean }) {
   const input = useRef<HTMLInputElement>(null);
