@@ -53,6 +53,7 @@ export interface BaselineRef {
   name: string;
   columns: string[];
   kinds: FeatureKind[];
+  schemaSignature?: string;
 }
 
 export type MlMode = 'off' | 'local' | 'baseline';
