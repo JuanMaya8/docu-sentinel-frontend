@@ -163,11 +163,12 @@ docs/CONTRACT.md         contrato entre los 3 repos
 
 | Estado | Elemento |
 |---|---|
-| ✅ **Verificado** (41 pruebas; `tsc` limpio; `next build` OK) | Motor completo, parsers CSV/TSV/JSON/NDJSON/PDF, detectores, IA local, determinismo 1–4 workers, exportación CSV/JSON, capa Next.js (SSG/CSR/SSR) |
+| ✅ **Verificado** (46 pruebas; `tsc` limpio; `next build` OK) | Motor completo, parsers CSV/TSV/JSON/NDJSON/PDF/**XLSX**, detectores, IA local, determinismo 1–4 workers, exportación CSV/JSON, capa Next.js (SSG/CSR/SSR) |
 | ✅ **Verificado en Chromium real** (`verify:browser`) | Web Workers, pdf.js, cancelación, mismos hallazgos en los 3 modos, medición Hilo principal vs Workers |
-| ✅ **Verificado E2E** (`test:e2e`, 12 comprobaciones, servicios reales) | Analizar, filtrar, exportar CSV, tema claro/oscuro, guardar en historial, entrenar línea base en la IA y reanalizar con ella (puntuación real en la IA), `/reportes` SSR con «En vivo» por socket.io, detalle de reporte |
+| ✅ **Verificado E2E** (`test:e2e`, **20 comprobaciones**, servicios reales con cuentas y PostgreSQL) | Crear cuenta e ingresar, historial privado sin sesión, analizar, filtrar, cajón accesible (foco atrapado, Escape), exportar CSV, tema, **restaurar tras recargar (IndexedDB)**, **analizar .xlsx**, guardar en historial, entrenar línea base y reanalizar con ella, **reentrenar (versión 2)**, `/reportes` SSR «En vivo», descargar JSON con la sesión, salir |
 | ✅ **Nuevo en v0.2.0** | Interruptor de tema (automático → claro → oscuro, sin destello al cargar); RESOLVE cede el hilo; la línea base se entrena con el `thresholdFloor`/`contamination` de la sensibilidad elegida (paridad con la IA) y se puntúa enviando `schemaSignature` |
-| ❌ **No hecho** | Autenticación de usuarios, OCR para PDF escaneados, `.xlsx`, PDF con celdas combinadas, i18n a otros idiomas, métricas con datos reales, persistencia del último análisis en IndexedDB |
+| ✅ **Nuevo en v0.3.0** | Cuentas (`/ingresar`, menú de cuenta, token en `localStorage` + cookie `ds_token` para el SSR), lector `.xlsx` sin dependencias (en workers), reentrenar líneas base, restaurar el último análisis, descargas autenticadas CSV/JSON, socket.io por usuario, accesibilidad del cajón y de la tabla del registro, `vercel.json` |
+| ❌ **No hecho** | OCR para PDF escaneados (Tesseract.js pesa ~10 MB y descarga modelos: queda como opción futura), PDF con celdas combinadas, `.xls` antiguo, i18n a otros idiomas, validación con datos reales de una organización |
 
 El detalle para continuar está en **`AI_CONTEXT.md`**.
 
