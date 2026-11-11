@@ -13,7 +13,10 @@ export const viewport: Viewport = { themeColor: '#0f5c5c', width: 'device-width'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="es">
+    <html lang="es" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body>
         <header className="site-header">
           <div className="wrap">
