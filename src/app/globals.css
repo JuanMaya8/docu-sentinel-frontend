@@ -176,9 +176,10 @@ table.plain th { color: var(--muted); font-weight: 600; font-size: .78rem; text-
 .drawer-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, .35); z-index: 40; }
 .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(520px, 100vw); background: var(--surface); z-index: 41; border-left: 1px solid var(--line); padding: 20px; overflow: auto; box-shadow: var(--shadow); }
 .kvtable { width: 100%; border-collapse: collapse; font-size: .88rem; }
-.kvtable td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
-.kvtable td:first-child { color: var(--muted); width: 38%; font-family: var(--mono); font-size: .8rem; }
-.kvtable tr.hl td { background: color-mix(in srgb, var(--critical) 10%, var(--surface)); }
+.kvtable td, .kvtable th { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.kvtable th { color: var(--muted); width: 38%; font-family: var(--mono); font-size: .8rem; }
+.kvtable tr.hl td, .kvtable tr.hl th { background: color-mix(in srgb, var(--critical) 10%, var(--surface)); }
+.kvtable tr.hl th { color: var(--ink); }
 
 .alert { padding: 12px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); }
 .alert.error { border-color: color-mix(in srgb, var(--critical) 50%, var(--line)); background: color-mix(in srgb, var(--critical) 8%, var(--surface)); }
