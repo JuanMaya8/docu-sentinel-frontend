@@ -147,6 +147,8 @@ export default function Analyzer() {
     sessionRef.current?.dispose();
     sessionRef.current = null;
     setSession(null);
+    setRestored(null);
+    setPrevious(null);
     setTraining(undefined);
     setSelected(null);
     setSaveMsg(null);
