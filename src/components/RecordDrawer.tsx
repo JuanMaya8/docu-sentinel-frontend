@@ -35,12 +35,33 @@ export function RecordDrawer({ finding, findings, loadRecord, onClose }: {
     };
   }, [idx, loadRecord]);
 
+  const panel = useRef<HTMLElement>(null);
+  // modal dialog: Escape closes, Tab/Shift+Tab stay inside, focus returns to the element that opened it
   useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+      if (e.key !== 'Tab' || !panel.current) return;
+      const focusables = panel.current.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      if (opener && document.contains(opener)) opener.focus();
+    };
   }, [onClose]);
 
   const same = useMemo(() => (idx === null ? [finding] : findings.filter((f) => f.recordIndex === idx)), [findings, idx, finding]);
