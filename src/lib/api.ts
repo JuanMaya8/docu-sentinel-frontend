@@ -4,6 +4,7 @@
  *  - server:   API_URL (falls back to NEXT_PUBLIC_API_URL) — useful inside Docker (http://backend:3001/api/v1)
  */
 import type { AnomalyType, ColumnSummary, FileFormat, Finding, MlMode, ProcessingMode, RiskLevel, Sensitivity } from '@/engine';
+import { clearSession, getStoredToken, type SessionUser } from './session';
 
 export interface AnalysisSummary {
   id: string;
