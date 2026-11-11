@@ -56,6 +56,30 @@ export function BaselinePanel({ training, defaultName, baselines, onChanged }: {
     }
   };
 
+  const retrain = async (b: BaselineDto): Promise<void> => {
+    if (!training) return;
+    if (!window.confirm(`¿Reentrenar «${b.name}» con los datos de este archivo? El modelo anterior se reemplaza.`)) return;
+    setBusy(true);
+    setMsg(null);
+    try {
+      const r = await api.retrainBaseline(b.id, {
+        matrix: toMatrix(training),
+        columns: training.columns,
+        contamination: training.contamination,
+        thresholdFloor: training.thresholdFloor,
+      });
+      setMsg({ kind: 'ok', text: `Línea base «${r.name}» reentrenada (versión ${r.version ?? '?'}, ${fmtInt(r.rows)} filas).` });
+      onChanged();
+    } catch (e) {
+      setMsg({ kind: 'error', text: errorMessage(e) });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const compatible = (b: BaselineDto): boolean =>
+    !!training && b.columns.length === training.columns.length && b.columns.every((c, i) => c === training.columns[i]);
+
   const remove = async (id: string): Promise<void> => {
     try {
       await api.deleteBaseline(id);
