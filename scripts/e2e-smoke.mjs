@@ -5,10 +5,14 @@
  *   2. npm run build && npm start               (NEXT_PUBLIC_API_URL must point to the backend at build time)
  *   3. E2E_BASE_URL=http://localhost:3000 npm run test:e2e
  *
+ * Works with and without user accounts on the backend (JWT_SECRET): when the header shows «Ingresar», the test
+ * creates a fresh account first and also checks that history is private before logging in.
+ *
  * Env: E2E_BASE_URL (default http://localhost:3000), CHROMIUM_PATH (optional browser executable),
  *      E2E_SKIP_BACKEND=1 to run only the local (browser-only) part.
  */
 import { chromium } from 'playwright';
+import { buildXlsx, invoiceRows } from './xlsx-writer.mjs';
 
 const BASE = (process.env.E2E_BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
 const WITH_BACKEND = process.env.E2E_SKIP_BACKEND !== '1';
