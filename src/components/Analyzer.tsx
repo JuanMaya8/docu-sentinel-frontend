@@ -72,7 +72,9 @@ export default function Analyzer() {
   const [finalFrames, setFinalFrames] = useState<FrameStats | undefined>();
   const [runs, setRuns] = useState<RunRow[]>([]);
   const [selected, setSelected] = useState<Finding | null>(null);
-  const [saveMsg, setSaveMsg] = useState<{ kind: 'ok' | 'error'; text: string; id?: string } | null>(null);
+  const [saveMsg, setSaveMsg] = useState<{ kind: 'ok' | 'error'; text: string; id?: string; login?: boolean } | null>(null);
+  const [previous, setPrevious] = useState<StoredAnalysis | null>(null);
+  const [restored, setRestored] = useState<StoredAnalysis | null>(null);
   const [sampleKind, setSampleKind] = useState<SynthKind>('invoices');
   const [sampleRows, setSampleRows] = useState(50_000);
 
