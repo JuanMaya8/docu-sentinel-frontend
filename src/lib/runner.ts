@@ -73,7 +73,8 @@ export async function runAnalysis(input: RunInput): Promise<RunResult> {
       scoreBaseline: baseline
         ? async (matrix): Promise<BaselineScore> => {
             try {
-              const r = await api.scoreBaseline(baseline.id, matrix);
+              // the matrix columns are the baseline's columns (specFromBaseline), so this checks the stored signature
+              const r = await api.scoreBaseline(baseline.id, matrix, 3, baseline.schemaSignature ? schemaSignature(baseline.columns) : undefined);
               return { scores: r.scores, flags: r.flags, threshold: r.threshold, contributions: r.contributions };
             } catch (e) {
               baselineFellBack = true;
