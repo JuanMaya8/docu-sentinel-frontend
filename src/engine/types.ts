@@ -3,7 +3,7 @@ import type { NumberStyle } from './util/numbers';
 import type { SerializedSketch } from './sketch/ddsketch';
 
 export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
-export type FileFormat = 'csv' | 'tsv' | 'json' | 'ndjson' | 'pdf';
+export type FileFormat = 'csv' | 'tsv' | 'json' | 'ndjson' | 'pdf' | 'xlsx';
 export type ProcessingMode = 'main' | 'worker' | 'pool';
 export type Sensitivity = 'low' | 'medium' | 'high';
 export type ValueType = 'null' | 'integer' | 'decimal' | 'date' | 'boolean' | 'email' | 'string';
