@@ -160,24 +160,58 @@ const qs = (o: object): string => {
   return s ? `?${s}` : '';
 };
 
-export const api = {
-  health: () => request<{ status: string; ai: 'up' | 'down'; version: string }>('/health'),
-  saveAnalysis: (dto: SaveAnalysisDto) => request<AnalysisSummary>('/analyses', { method: 'POST', body: JSON.stringify(dto) }),
-  listAnalyses: (limit = 20, offset = 0) => request<Page<AnalysisSummary>>(`/analyses${qs({ limit, offset })}`),
-  getAnalysis: (id: string) => request<AnalysisDetail>(`/analyses/${encodeURIComponent(id)}`),
-  getFindings: (id: string, query: FindingsQuery = {}) => request<Page<Finding>>(`/analyses/${encodeURIComponent(id)}/findings${qs(query)}`),
-  exportCsvUrl: (id: string) => `${apiBaseUrl()}/analyses/${encodeURIComponent(id)}/export.csv`,
-  deleteAnalysis: (id: string) => request<void>(`/analyses/${encodeURIComponent(id)}`, { method: 'DELETE' }),
-  listBaselines: () => request<BaselineDto[]>('/baselines'),
-  createBaseline: (dto: { name: string; columns: string[]; kinds?: string[]; matrix: Array<Array<number | null>>; schemaSignature?: string; contamination?: number; seed?: number; thresholdFloor?: number }) =>
-    request<BaselineDto>('/baselines', { method: 'POST', body: JSON.stringify(dto) }),
-  deleteBaseline: (id: string) => request<void>(`/baselines/${encodeURIComponent(id)}`, { method: 'DELETE' }),
-  scoreBaseline: (id: string, matrix: Array<Array<number | null>>, topK = 3, schemaSignature?: string) =>
-    request<AiScoreResponse>(`/baselines/${encodeURIComponent(id)}/score`, {
-      method: 'POST',
-      body: JSON.stringify({ matrix, explain: 'flagged', topK, ...(schemaSignature ? { schemaSignature } : {}) }),
-    }),
-};
+const id = (x: string): string => encodeURIComponent(x);
+
+/**
+ * `getToken` returns the session token to send (browser: localStorage; server components: the session cookie, see
+ * src/lib/serverApi.ts). Without accounts on the backend it simply returns undefined.
+ */
+export function createApi(getToken: () => string | undefined = getStoredToken) {
+  const r = <T,>(path: string, init: RequestInit = {}): Promise<T> => request<T>(path, init, getToken());
+  const post = (body: unknown): RequestInit => ({ method: 'POST', body: JSON.stringify(body) });
+  return {
+    health: () => r<HealthDto>('/health'),
+    register: (dto: { email: string; password: string; name?: string }) => r<AuthSessionDto>('/auth/register', post(dto)),
+    login: (dto: { email: string; password: string }) => r<AuthSessionDto>('/auth/login', post(dto)),
+    me: () => r<SessionUser>('/auth/me'),
+    saveAnalysis: (dto: SaveAnalysisDto) => r<AnalysisSummary>('/analyses', post(dto)),
+    listAnalyses: (limit = 20, offset = 0) => r<Page<AnalysisSummary>>(`/analyses${qs({ limit, offset })}`),
+    getAnalysis: (aid: string) => r<AnalysisDetail>(`/analyses/${id(aid)}`),
+    getFindings: (aid: string, query: FindingsQuery = {}) => r<Page<Finding>>(`/analyses/${id(aid)}/findings${qs(query)}`),
+    exportCsvUrl: (aid: string) => `${apiBaseUrl()}/analyses/${id(aid)}/export.csv`,
+    exportJsonUrl: (aid: string) => `${apiBaseUrl()}/analyses/${id(aid)}/export.json`,
+    /** Downloads an export with the session header (a plain link would not carry the token). Browser only. */
+    downloadExport: async (aid: string, kind: 'csv' | 'json', fallbackName: string): Promise<void> => {
+      const res = await send(`/analyses/${id(aid)}/export.${kind}`, {}, getToken());
+      const disposition = res.headers.get('Content-Disposition') ?? '';
+      const name = /filename="([^"]+)"/.exec(disposition)?.[1] ?? fallbackName;
+      const url = URL.createObjectURL(await res.blob());
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+    },
+    deleteAnalysis: (aid: string) => r<void>(`/analyses/${id(aid)}`, { method: 'DELETE' }),
+    listBaselines: () => r<BaselineDto[]>('/baselines'),
+    createBaseline: (dto: { name: string; columns: string[]; kinds?: string[]; matrix: Matrix; schemaSignature?: string; contamination?: number; seed?: number; thresholdFloor?: number }) =>
+      r<BaselineDto>('/baselines', post(dto)),
+    retrainBaseline: (bid: string, dto: { matrix: Matrix; columns?: string[]; contamination?: number; thresholdFloor?: number }) =>
+      r<BaselineDto>(`/baselines/${id(bid)}/retrain`, post(dto)),
+    deleteBaseline: (bid: string) => r<void>(`/baselines/${id(bid)}`, { method: 'DELETE' }),
+    scoreBaseline: (bid: string, matrix: Matrix, topK = 3, schemaSignature?: string) =>
+      r<AiScoreResponse>(`/baselines/${id(bid)}/score`, post({ matrix, explain: 'flagged', topK, ...(schemaSignature ? { schemaSignature } : {}) })),
+  };
+}
+
+/** Browser client (token from localStorage). Server components must use `serverApi()` instead. */
+export const api = createApi();
+
+export function isAuthError(e: unknown): boolean {
+  return e instanceof ApiError && e.status === 401;
+}
 
 export function errorMessage(e: unknown): string {
   if (e instanceof ApiError) return e.message;
