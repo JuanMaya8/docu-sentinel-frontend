@@ -255,13 +255,9 @@ export default function Analyzer() {
       <header>
         <p className="eyebrow">Análisis</p>
         <h1 style={{ fontSize: '2rem' }}>Analizar un archivo</h1>
-        <p className="muted" style={{ maxWidth: 720 }}>El archivo se lee y se revisa en este navegador. Elige cómo quieres procesarlo y compara.</p>
+        <p className="muted" style={{ maxWidth: 720 }}>Sube un archivo y te mostramos duplicados, campos vacíos, valores fuera de rango y registros sospechosos, con una explicación de cada uno. El archivo se revisa en tu equipo y no se sube a ningún servidor.</p>
       </header>
 
-      <section className="card stack" aria-label="Configuración">
-        <ModeSelector mode={mode} onMode={setMode} workers={workers} onWorkers={setWorkers} maxWorkers={maxWorkers} disabled={busy} />
-        <SettingsPanel value={settings} onChange={setSettings} baselines={baselines} baselinesError={baselinesError} disabled={busy} />
-      </section>
 
       {previous && !session && !restored && !busy && (
         <section className="card restore-banner" aria-label="Análisis anterior">
