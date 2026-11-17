@@ -26,12 +26,12 @@ import { BaselinePanel } from './BaselinePanel';
 import { Dropzone } from './Dropzone';
 import { LiveMeter } from './LiveMeter';
 import { ModeSelector } from './ModeSelector';
+import { MODE_LABEL } from '@/lib/modes';
 import { RecordDrawer } from './RecordDrawer';
 import { ReportTable } from './ReportTable';
 import { SettingsPanel, type UiSettings } from './SettingsPanel';
 import { Summary } from './Summary';
 
-const MODE_LABEL: Record<ProcessingMode, string> = { main: 'Hilo principal', worker: '1 worker', pool: 'Workers en paralelo' };
 const SAMPLE_KINDS: Array<[SynthKind, string]> = [['invoices', 'Facturas (CSV)'], ['inventory', 'Inventario (JSON)'], ['orders', 'Pedidos (CSV)']];
 const SAMPLE_SIZES = [10_000, 50_000, 200_000, 500_000];
 const MAX_SAVED_FINDINGS = 100_000;
