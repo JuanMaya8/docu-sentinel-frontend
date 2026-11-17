@@ -59,14 +59,14 @@ export default function BenchmarkView() {
       const data = generateDataset({ kind, rows, seed: 11 });
       setSize(data.blob.size);
       const plan: Array<{ key: string; label: string; mode: ProcessingMode; workers: number; color: string }> = [];
-      if (!skipMain) plan.push({ key: 'main', label: 'Hilo principal', mode: 'main', workers: 1, color: 'var(--critical)' });
-      plan.push({ key: 'worker', label: '1 Web Worker', mode: 'worker', workers: 1, color: 'var(--medium)' });
-      plan.push({ key: 'pool', label: `${workers} Workers`, mode: 'pool', workers, color: 'var(--accent)' });
+      if (!skipMain) plan.push({ key: 'main', label: MODE_LABEL.main, mode: 'main', workers: 1, color: 'var(--critical)' });
+      plan.push({ key: 'worker', label: MODE_LABEL.worker, mode: 'worker', workers: 1, color: 'var(--medium)' });
+      plan.push({ key: 'pool', label: MODE_LABEL.pool, mode: 'pool', workers, color: 'var(--accent)' });
 
       const out: Result[] = [];
       for (const p of plan) {
         if (controller.signal.aborted) break;
-        setStatus(`Midiendo: ${p.label}…`);
+        setStatus(`Midiendo el modo ${p.label}…`);
         await new Promise((r) => setTimeout(r, 400)); // let the page settle between runs
         monitor.start();
         const t0 = performance.now();
