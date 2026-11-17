@@ -131,7 +131,7 @@ export async function analyzeFile(
           rowsPerShard[i] = p.rows ?? rowsPerShard[i];
           const bytes = bytesPerShard.reduce((a, b) => a + b, 0);
           const rows = rowsPerShard.reduce((a, b) => a + b, 0);
-          report('parse', plan.totalBytes > 0 && plan.rows === null ? Math.min(1, bytes / plan.totalBytes) : 0.5, 'Leyendo y perfilando registros…', { rows, bytes });
+          report('parse', plan.totalBytes > 0 && plan.rows === null ? Math.min(1, bytes / plan.totalBytes) : 0.5, 'Leyendo los registros…', { rows, bytes });
         },
       }),
     ),
