@@ -76,7 +76,6 @@ export default function Analyzer() {
   const [sampleKind, setSampleKind] = useState<SynthKind>('invoices');
   const [sampleRows, setSampleRows] = useState(50_000);
 
-  const monitor = useMemo(() => new FrameMonitor(), []);
   const abortRef = useRef<AbortController | null>(null);
   const sessionRef = useRef<AnalysisSession | null>(null);
   const runId = useRef(0);
