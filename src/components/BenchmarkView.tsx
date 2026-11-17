@@ -39,7 +39,6 @@ export default function BenchmarkView() {
   const abort = useRef<AbortController | null>(null);
 
   useEffect(() => {
-    setCores(navigator.hardwareConcurrency || 0);
     setWorkers(defaultWorkerCount());
     return () => {
       abort.current?.abort();
