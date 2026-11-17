@@ -8,7 +8,7 @@ import { THEME_BOOT_SCRIPT, ThemeToggle } from '@/components/ThemeToggle';
 
 export const metadata: Metadata = {
   title: { default: 'Docu Sentinel — Motor de inconsistencias en documentos', template: '%s · Docu Sentinel' },
-  description: 'Detecta duplicados, campos faltantes, valores fuera de rango y registros sospechosos en CSV, JSON y PDF sin subir tus archivos: el análisis corre en tu navegador con Web Workers.',
+  description: 'Detecta duplicados, campos faltantes, valores fuera de rango y registros sospechosos en CSV, JSON y PDF sin subir tus archivos: el análisis corre en tu navegador.',
 };
 export const viewport: Viewport = { themeColor: '#0f5c5c', width: 'device-width', initialScale: 1 };
 
