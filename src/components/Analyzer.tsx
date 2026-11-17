@@ -314,7 +314,7 @@ export default function Analyzer() {
           <LiveMeter monitor={monitor} active={phase === 'running'} stats={finalFrames} />
           {phase === 'done' && report && (
             <p className="small" style={{ margin: 0 }}>
-              Terminado en <b>{fmtMs(report.meta.durationMs)}</b>. Fases: {Object.entries(report.meta.phaseMs).map(([k, v]) => `${k} ${fmtMs(v)}`).join(' · ')}
+              Análisis terminado en <b>{fmtMs(report.meta.durationMs)}</b>.
             </p>
           )}
         </section>
