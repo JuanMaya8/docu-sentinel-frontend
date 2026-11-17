@@ -67,8 +67,8 @@ export default function Analyzer() {
   const [session, setSession] = useState<AnalysisSession | null>(null);
   const [training, setTraining] = useState<TrainingSample | undefined>();
   const [fellBack, setFellBack] = useState(false);
-  const [finalFrames, setFinalFrames] = useState<FrameStats | undefined>();
-  const [runs, setRuns] = useState<RunRow[]>([]);
+  const [startedAt, setStartedAt] = useState(0);
+  const [focus, setFocus] = useState<TableFocus | null>(null);
   const [selected, setSelected] = useState<Finding | null>(null);
   const [saveMsg, setSaveMsg] = useState<{ kind: 'ok' | 'error'; text: string; id?: string; login?: boolean } | null>(null);
   const [previous, setPrevious] = useState<StoredAnalysis | null>(null);
