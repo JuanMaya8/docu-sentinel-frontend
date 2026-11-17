@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { modeLabel } from '@/lib/modes';
 import Link from 'next/link';
 import { RealtimeRefresher } from '@/components/RealtimeRefresher';
 import { RiskChip } from '@/components/Summary';
