@@ -255,7 +255,7 @@ export async function analyzeFile(
 
   // ---------------------------------------------------------------- RESOLVE
   t = now();
-  report('resolve', 0, 'Resolviendo duplicados y armando el reporte…');
+  report('resolve', 0, 'Buscando duplicados y armando el reporte…');
   // RESOLVE runs on the UI thread: in worker/pool modes it yields between steps (and inside the long loops)
   // so a 500k-row report does not freeze the page in one long task. Main-thread mode never yields on purpose.
   const yieldUi = mode === 'main' ? async (): Promise<void> => undefined : yieldToEventLoop;
