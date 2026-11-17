@@ -109,9 +109,8 @@ export default function Analyzer() {
     () => () => {
       abortRef.current?.abort();
       sessionRef.current?.dispose();
-      monitor.stop();
     },
-    [monitor],
+    [],
   );
 
   const buildOptions = (): Partial<AnalysisOptions> | string => {
