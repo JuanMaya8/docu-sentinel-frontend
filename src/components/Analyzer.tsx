@@ -347,36 +347,17 @@ export default function Analyzer() {
             )}
           </div>
 
-          <ReportTable findings={report.findings} selected={selected} onOpen={setSelected} />
+          <h2 style={{ marginBottom: 0 }}>Todos los hallazgos</h2>
+          <p className="small muted" style={{ margin: 0 }}>Haz clic en una fila para ver el registro completo y por qué se marcó.</p>
+          <ReportTable findings={report.findings} selected={selected} onOpen={setSelected} focus={focus} />
+
+          <Summary data={{ rows: report.meta.rows, columns: report.meta.columns, findingsCount: report.totalFindings, recordsAffected: report.recordsAffected, byRisk: report.byRisk, byType: report.byType }} />
           {selected && <RecordDrawer finding={selected} findings={report.findings} loadRecord={loadRecord} onClose={() => setSelected(null)} />}
 
           <BaselinePanel training={training} defaultName={defaultBaselineName} baselines={baselines} onChanged={() => void loadBaselines()} />
         </>
       )}
 
-      {runs.length > 0 && (
-        <section className="card" aria-label="Tus análisis en esta sesión">
-          <h3>Tus análisis en esta sesión</h3>
-          <div className="table-scroll">
-            <table className="plain">
-              <thead><tr><th>Archivo</th><th>Registros</th><th>Velocidad</th><th>Tiempo</th><th>Pausa más larga</th><th>Trabas</th><th>Fluidez (cuadros/s)</th></tr></thead>
-              <tbody>
-                {runs.map((r) => (
-                  <tr key={r.id}>
-                    <td>{r.file}</td>
-                    <td className="mono">{fmtInt(r.rows)}</td>
-                    <td>{MODE_LABEL[r.mode]}</td>
-                    <td className="mono">{fmtMs(r.ms)}</td>
-                    <td className="mono" style={{ color: r.frames.maxGapMs > 100 ? 'var(--critical)' : undefined }}>{fmtMs(r.frames.maxGapMs)}</td>
-                    <td className="mono">{r.frames.freezes}</td>
-                    <td className="mono">{Math.round(r.frames.fps)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-      )}
     </div>
   );
 }
