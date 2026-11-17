@@ -83,9 +83,7 @@ export default function Analyzer() {
   const runId = useRef(0);
 
   useEffect(() => {
-    const n = defaultWorkerCount();
-    setMaxWorkers(Math.max(2, (navigator.hardwareConcurrency || 8) - 1));
-    setWorkers(n);
+    setWorkers(defaultWorkerCount());
   }, []);
 
   const loadBaselines = useCallback(async () => {
