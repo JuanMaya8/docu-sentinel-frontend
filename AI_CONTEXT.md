@@ -91,6 +91,7 @@ Nuevo en v0.2.0:
 5. Textos al usuario en español con formato es-CO (`fmtNum` en `i18n/es.ts`: `1.234,5`).
 6. **Pensado para el usuario final**: la interfaz no habla de Web Workers, hilos ni velocidades. `/analizar` usa siempre el modo `pool` (el más rápido) sin preguntar, muestra el tiempo restante y, en los resultados, **«Qué revisar primero»** (`ActionPlan.tsx`: problemas agrupados con un consejo y un botón que filtra la tabla). La comparación hilo principal vs workers que pide el enunciado sigue en `/benchmark` (*Prueba de rendimiento*), enlazada solo desde el pie de página.
 7. Sin dependencias nuevas de UI/gráficos sin necesidad (todo es SVG/CSS propios).
+8. **Sistema de diseño** («Obsidian Sentinel»): tokens como variables CSS al inicio de `src/app/globals.css` (modo claro + oscuro derivado; cada riesgo tiene un tono de relleno y otro `-text` que cumple AA). Fuentes con `next/font`: Geist (paquete `geist`) y JetBrains Mono (`next/font/google`). Iconos SVG propios en `src/components/Icon.tsx` (sin librerías ni CDN). Sin Tailwind. En móvil la tabla de hallazgos pasa a tarjetas (`ReportTable`, altura de fila por `matchMedia`) y el panel de detalle ocupa toda la pantalla.
 
 ## 5. Comandos de verificación
 ```bash
