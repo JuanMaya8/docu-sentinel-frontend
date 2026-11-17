@@ -110,7 +110,7 @@ export async function analyzeFile(
   report('plan', 0, 'Leyendo estructura del archivo…');
   const blocking = mode === 'main';
   const plan: PlanResult = await pool.call(0, 'plan', { file, fileName, shardCount: pool.size, dateOrder: options.dateOrder, blocking }, {
-    onProgress: (p) => report('plan', p.fraction ?? 0, 'Planificando particiones del archivo…', { bytes: p.bytes }),
+    onProgress: (p) => report('plan', p.fraction ?? 0, 'Preparando el archivo…', { bytes: p.bytes }),
   });
   warnings.push(...plan.warnings);
   check();
