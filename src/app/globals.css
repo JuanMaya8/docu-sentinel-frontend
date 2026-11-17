@@ -231,6 +231,7 @@ table.plain { width: 100%; border-collapse: collapse; font-size: 14px; }
 table.plain th, table.plain td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
 table.plain th { color: var(--muted); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; border-bottom-color: var(--line-strong); background: var(--surface); }
 table.plain tbody tr:hover { background: var(--surface-2); }
+table.plain td.mono { white-space: nowrap; }
 .table-scroll { overflow-x: auto; }
 
 /* ---- alerts ---- */
@@ -388,11 +389,6 @@ table.plain tbody tr:hover { background: var(--surface-2); }
 .diag-meta { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 10px 0 0; padding-top: 8px; border-top: 1px dashed var(--line-strong); font-size: 12px; }
 .diag-meta dt { color: var(--muted); }
 .diag-meta dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
-.kvtable { width: 100%; border-collapse: collapse; font-size: 12px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-.kvtable td, .kvtable th { padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
-.kvtable th { color: var(--muted); width: 40%; background: var(--bg); }
-.kvtable tr.hl td, .kvtable tr.hl th { background: color-mix(in srgb, var(--critical) 9%, var(--surface)); color: var(--ink); }
-.kvtable tr.hl th::before { content: '● '; color: var(--critical-text); }
 @media (max-width: 720px) {
   .drawer { width: 100vw; border-left: 0; padding: 16px; }
   .drawer::before { display: none; }
@@ -441,16 +437,25 @@ table.plain tbody tr:hover { background: var(--surface-2); }
 .auth-switch { text-align: center; margin: 0; }
 @media (max-width: 480px) { .auth-card { padding: 24px 18px; } }
 
-/* ---- page styles carried over (each screen replaces its block when redesigned) ---- */
-.meter { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; }
-.heartbeat { width: 74px; height: 74px; position: relative; border-radius: 50%; border: 3px solid var(--line); }
+/* ---- performance test ---- */
+.bench-controls { display: grid; gap: 12px; }
+.bench-run { margin-left: auto; }
+.bench-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .bench-grid { grid-template-columns: 1fr; } .bench-run { margin-left: 0; } }
+.bench-bar { display: grid; grid-template-columns: 170px 1fr 80px; gap: 12px; align-items: center; margin: 10px 0; }
+.bench-bar .bench-label { display: grid; gap: 2px; font-size: 13px; }
+.bench-bar .track { height: 20px; background: var(--surface-2); border-radius: var(--radius-xs); overflow: hidden; }
+.bench-bar .track i { display: block; height: 100%; border-radius: var(--radius-xs); }
+.bench-bar > b { text-align: right; }
+@media (max-width: 560px) { .bench-bar { grid-template-columns: 1fr 72px; } .bench-bar .track { grid-column: 1 / -1; grid-row: 2; } }
+.bench-live { display: grid; gap: 12px; }
+.meter { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; }
+.heartbeat { width: 72px; height: 72px; position: relative; border-radius: 50%; border: 3px solid var(--line-strong); }
 .heartbeat i { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px; border-radius: 50%; background: var(--accent); will-change: transform; }
 .heartbeat.frozen { border-color: var(--critical); }
 .heartbeat.frozen i { background: var(--critical); }
-.kv { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
-@media (max-width: 700px) { .kv { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.kv div b { display: block; font-family: var(--mono); font-size: 1.2rem; letter-spacing: -0.02em; }
-.kv div span { font-size: .78rem; color: var(--muted); }
-.bench-bar { display: grid; grid-template-columns: 150px 1fr 90px; gap: 10px; align-items: center; margin: 8px 0; }
-.bench-bar .track { height: 22px; background: var(--surface-2); border-radius: 6px; overflow: hidden; }
-.bench-bar .track i { display: block; height: 100%; border-radius: 6px; }
+.kv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
+.kv div b { display: block; font-family: var(--mono); font-size: 18px; line-height: 24px; letter-spacing: -0.02em; }
+.kv div span { font-size: 12px; color: var(--muted); }
+.conclusion { display: flex; gap: 14px; align-items: flex-start; border-left: 4px solid var(--accent); }
+
