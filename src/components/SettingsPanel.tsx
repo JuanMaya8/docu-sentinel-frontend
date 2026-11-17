@@ -19,7 +19,7 @@ const DETECTOR_LABELS: Record<DetectorId, string> = {
   range: 'Rangos',
   relations: 'Relaciones',
   suspicious: 'Sospechosos',
-  ml: 'IA (multivariante)',
+  ml: 'Inteligencia artificial',
 };
 
 export function SettingsPanel({ value, onChange, baselines, baselinesError, disabled }: {
