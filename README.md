@@ -1,15 +1,43 @@
-# docu-sentinel-frontend
+<div align="center">
 
-Interfaz y **motor de análisis** del proyecto *Motor Inteligente para Detectar Inconsistencias en Documentos*.
-Es el repositorio principal del sistema (junto a `docu-sentinel-backend` y `docu-sentinel-ai`).
+# 🛡️ Docu Sentinel — Frontend y motor de análisis
 
-Sube un **CSV, TSV, JSON, NDJSON o PDF** (con tablas de texto) y obtén un reporte con **Registro · Tipo de anomalía · Nivel de riesgo · Campo afectado · Explicación**.
-Todo el análisis corre **en el navegador, en Web Workers**: el archivo no se sube a ningún servidor.
+**Motor inteligente para detectar inconsistencias en documentos**
 
-> **Estado: v0.3.0 — funcional, verificado y listo para Vercel** (46 pruebas del motor, `next build`, Chromium real y
-> E2E de 20 comprobaciones con backend + IA + PostgreSQL reales y cuentas). Despliegue: [`DEPLOY.md`](DEPLOY.md).
+![Next.js 14](https://img.shields.io/badge/Next.js%2014-000000?logo=nextdotjs&logoColor=white) ![React 18](https://img.shields.io/badge/React%2018-61DAFB?logo=react&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Web Workers](https://img.shields.io/badge/Web%20Workers-0F766E?logo=javascript&logoColor=white) ![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)
 
-## Cómo ejecutarlo
+**Frontend** · [Backend](https://github.com/JuanMaya8/docu-sentinel-backend) · [IA](https://github.com/JuanMaya8/docu-sentinel-ai)
+
+</div>
+
+---
+
+Interfaz y **motor de análisis** del sistema Docu Sentinel (repositorio principal).
+
+Sube un **CSV, TSV, JSON, NDJSON, Excel (XLSX) o PDF** con tablas de texto y obtén un reporte con
+**Registro · Tipo de anomalía · Nivel de riesgo · Campo afectado · Explicación**, más un plan de qué revisar primero.
+
+- 🔒 **Privado**: todo el análisis corre **en tu navegador**; el archivo nunca se sube a un servidor.
+- ⚡ **Rápido y fluido**: el trabajo se reparte en varios procesos en segundo plano, así la página nunca se traba.
+- 🧠 **Con IA**: Isolation Forest + modelo de coherencia, con explicaciones en español.
+- 📚 **Historial**: con una cuenta, los reportes se guardan y se actualizan en vivo.
+- 🌗 **Tema claro y oscuro**, accesible (WCAG AA) y adaptado a celular.
+
+> **v0.3.0** · 46 pruebas del motor · verificado en Chromium real y con pruebas E2E contra backend, IA y PostgreSQL ·
+> desplegado en **Vercel** ([`DEPLOY.md`](DEPLOY.md)).
+
+
+**Contenido**
+
+- [Cómo ejecutarlo](#-cómo-ejecutarlo)
+- [Arquitectura](#-arquitectura)
+- [Resultados medidos (Chromium real)](#-resultados-medidos-chromium-real)
+- [Estructura](#-estructura)
+- [Estado y pruebas](#-estado-y-pruebas)
+- [Limitaciones conocidas](#-limitaciones-conocidas)
+- [Despliegue (Vercel)](#-despliegue-vercel)
+
+## 🚀 Cómo ejecutarlo
 
 Requisitos: **Node 18.18+** (recomendado 20). No hace falta tener el backend para analizar archivos; solo el historial y las líneas base lo usan.
 
@@ -18,20 +46,6 @@ npm install
 cp .env.example .env.local        # ajusta NEXT_PUBLIC_API_URL si el backend no está en :3001
 npm run dev                       # http://localhost:3000
 ```
-
-Ejecuta `npm run dev` desde la carpeta `docu-sentinel-frontend`. Si en `http://localhost:3000` aparece una aplicación anterior aunque la terminal indique que este proyecto está listo, puede ser un *service worker* guardado por otro proyecto en el mismo origen. Debes limpiarlo en el mismo navegador y perfil donde ves el problema (por ejemplo, Chrome; limpiar el navegador integrado de VS Code no limpia Chrome). En Chrome abre las herramientas de desarrollador (`F12`) → **Application** → **Storage** → **Clear site data**, y luego recarga la página. Alternativamente, en la consola de esas herramientas puedes ejecutar:
-```js
-await Promise.all((await navigator.serviceWorker.getRegistrations()).map(registration => registration.unregister()));
-await Promise.all((await caches.keys()).map(key => caches.delete(key)));
-```
-Esto limpia datos locales de ese origen (`localhost`), no los archivos del proyecto. Los Web Workers de análisis corren dentro de la página y no sirven aplicaciones ni ocupan el puerto.
-
-Si Next.js avisa que el puerto 3000 ya está ocupado, revisa qué proceso lo usa en PowerShell:
-```powershell
-Get-NetTCPConnection -LocalPort 3000 -State Listen |
-  Select-Object LocalAddress, LocalPort, OwningProcess
-```
-Solo si confirmas que el PID corresponde a un servidor antiguo, puedes detenerlo con `Stop-Process -Id <PID>`. Si Next.js inicia en otro puerto, usa la URL que indique la terminal.
 
 | Comando | Qué hace |
 |---|---|
@@ -60,7 +74,26 @@ Para probar sin archivos, en **Analizar** pulsa «Generar y analizar» (datos de
 ```
 El backend tiene un `docker-compose.yml` que levanta backend + IA juntos.
 
-## Arquitectura completa
+<details>
+<summary><b>¿Problemas al iniciar? (puerto ocupado o se ve otra app)</b></summary>
+
+Ejecuta `npm run dev` desde la carpeta `docu-sentinel-frontend`. Si en `http://localhost:3000` aparece una aplicación anterior aunque la terminal indique que este proyecto está listo, puede ser un *service worker* guardado por otro proyecto en el mismo origen. Debes limpiarlo en el mismo navegador y perfil donde ves el problema (por ejemplo, Chrome; limpiar el navegador integrado de VS Code no limpia Chrome). En Chrome abre las herramientas de desarrollador (`F12`) → **Application** → **Storage** → **Clear site data**, y luego recarga la página. Alternativamente, en la consola de esas herramientas puedes ejecutar:
+```js
+await Promise.all((await navigator.serviceWorker.getRegistrations()).map(registration => registration.unregister()));
+await Promise.all((await caches.keys()).map(key => caches.delete(key)));
+```
+Esto limpia datos locales de ese origen (`localhost`), no los archivos del proyecto. Los Web Workers de análisis corren dentro de la página y no sirven aplicaciones ni ocupan el puerto.
+
+Si Next.js avisa que el puerto 3000 ya está ocupado, revisa qué proceso lo usa en PowerShell:
+```powershell
+Get-NetTCPConnection -LocalPort 3000 -State Listen |
+  Select-Object LocalAddress, LocalPort, OwningProcess
+```
+Solo si confirmas que el PID corresponde a un servidor antiguo, puedes detenerlo con `Stop-Process -Id <PID>`. Si Next.js inicia en otro puerto, usa la URL que indique la terminal.
+
+</details>
+
+## 🏗️ Arquitectura
 
 ```
                     ┌─────────────────────────── NAVEGADOR ───────────────────────────┐
@@ -126,7 +159,7 @@ Riesgo: puntaje 0–100 → bajo < 35 · medio < 60 · alto < 80 · crítico ≥
 2. En el siguiente archivo elige *Inteligencia artificial → Aprender de datos históricos* y la línea base. El frontend envía solo las características del archivo nuevo; la IA devuelve puntajes y el motor los convierte en hallazgos.
 3. Si la IA o el backend no responden, el motor **cae solo al modelo local** y lo avisa.
 
-## Resultados medidos (Chromium real)
+## 📊 Resultados medidos (Chromium real)
 
 `npm run verify:browser`, **Chromium headless con 24 núcleos lógicos** (Windows, v0.2.0), facturas CSV sintéticas, IA local activa, 1 repetición por celda. *Corre el comando en tu máquina para tus números.*
 
@@ -149,7 +182,7 @@ Lectura honesta:
 
 Calidad de detección en datos sintéticos con anomalías sembradas (30 000 facturas): duplicados exactos/por clave/casi idénticos, faltantes, tipos, fechas imposibles, negativos, relaciones imposibles, etiquetas y espacios: **25/25**; fuera de rango 24/25; montos bajo umbral 145/145; la IA recupera 200/200 de los registros multivariantes sembrados con ~75 % de precisión. Sobre filas *no* sembradas, las reglas generan < 0,2 % de falsos positivos; la IA marca ≈ 1 % por diseño (su presupuesto de contaminación). **Son datos sintéticos: no hay validación con datos reales.**
 
-## Estructura
+## 📁 Estructura
 
 ```
 src/
@@ -165,7 +198,7 @@ tests/                   util, csv, pipeline (recall/precisión/determinismo), p
 docs/CONTRACT.md         contrato entre los 3 repos
 ```
 
-## Qué está hecho y qué no
+## ✅ Estado y pruebas
 
 | Estado | Elemento |
 |---|---|
@@ -174,22 +207,16 @@ docs/CONTRACT.md         contrato entre los 3 repos
 | ✅ **Verificado E2E** (`test:e2e`, **20 comprobaciones**, servicios reales con cuentas y PostgreSQL) | Crear cuenta e ingresar, historial privado sin sesión, analizar, filtrar, cajón accesible (foco atrapado, Escape), exportar CSV, tema, **restaurar tras recargar (IndexedDB)**, **analizar .xlsx**, guardar en historial, entrenar línea base y reanalizar con ella, **reentrenar (versión 2)**, `/reportes` SSR «En vivo», descargar JSON con la sesión, salir |
 | ✅ **Nuevo en v0.2.0** | Interruptor de tema (automático → claro → oscuro, sin destello al cargar); RESOLVE cede el hilo; la línea base se entrena con el `thresholdFloor`/`contamination` de la sensibilidad elegida (paridad con la IA) y se puntúa enviando `schemaSignature` |
 | ✅ **Nuevo en v0.3.0** | Cuentas (`/ingresar`, menú de cuenta, token en `localStorage` + cookie `ds_token` para el SSR), lector `.xlsx` sin dependencias (en workers), reentrenar líneas base, restaurar el último análisis, descargas autenticadas CSV/JSON, socket.io por usuario, accesibilidad del cajón y de la tabla del registro, `vercel.json` |
-| ❌ **No hecho** | OCR para PDF escaneados (Tesseract.js pesa ~10 MB y descarga modelos: queda como opción futura), PDF con celdas combinadas, `.xls` antiguo, i18n a otros idiomas, validación con datos reales de una organización |
+| 🔭 **Trabajo futuro** | OCR para PDF escaneados (Tesseract.js pesa ~10 MB y descarga modelos: queda como opción futura), PDF con celdas combinadas, `.xls` antiguo, i18n a otros idiomas, validación con datos reales de una organización |
 
-El detalle para continuar está en **`AI_CONTEXT.md`**.
-
-## Limitaciones conocidas
+## ⚠️ Limitaciones conocidas
 * PDF: solo texto seleccionable con columnas alineadas; sin OCR.
 * JSON: se carga completo en memoria (límite de seguridad de 400 MB); CSV/NDJSON se leen por bloques.
 * Archivos de varios cientos de MB dependen de la memoria del navegador (las columnas se guardan en el worker).
 * Excel: se lee **la primera hoja** de `.xlsx`/`.xlsm` (valores cacheados de fórmulas, fechas por formato de celda); `.xls` (97-2003) no está soportado.
 * La ganancia de velocidad depende de los núcleos reales; el hilo principal sirve de comparación, no de modo recomendado.
 
-## Despliegue (Vercel)
+## ☁️ Despliegue (Vercel)
 * **Vercel**: ver [`DEPLOY.md`](DEPLOY.md). Importa el repo (`vercel.json` incluido); variables `NEXT_PUBLIC_API_URL` (URL pública del backend + `/api/v1`) y `API_URL` (la misma, usada por SSR). El script `build` copia el worker de pdf.js a `public/`.
 * **Docker**: `Dockerfile` multi-etapa con `output: 'standalone'` (usa `--build-arg NEXT_PUBLIC_API_URL=…`).
 * En el backend define `CORS_ORIGINS` con el dominio del frontend.
-
-
-## Contexto técnico
-**`AI_CONTEXT.md`** resume el estado del proyecto: dice qué está terminado, qué falta para el 100 %, las convenciones (código en inglés, textos al usuario en español), los comandos de verificación y las trampas conocidas.
