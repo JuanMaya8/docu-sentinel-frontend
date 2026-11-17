@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { modeLabel } from '@/lib/modes';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SavedReportView } from '@/components/SavedReportView';
