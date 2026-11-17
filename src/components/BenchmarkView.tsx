@@ -133,18 +133,14 @@ export default function BenchmarkView() {
               {SIZES.map((n) => (<option key={n} value={n}>{fmtInt(n)}</option>))}
             </select>
           </div>
-          <div className="field">
-            <label htmlFor="b-w">Workers en paralelo</label>
-            <input id="b-w" className="input" type="number" min={2} max={16} value={workers} onChange={(e) => setWorkers(Math.max(2, Math.min(16, Number(e.target.value) || 2)))} style={{ width: 90 }} disabled={running} />
-          </div>
-          <label className="small" style={{ alignSelf: 'end', paddingBottom: 8 }}>
-            <input type="checkbox" checked={skipMain} onChange={(e) => setSkipMain(e.target.checked)} disabled={running} /> omitir hilo principal (para archivos enormes)
+          <label className="check-inline">
+            <input type="checkbox" checked={skipMain} onChange={(e) => setSkipMain(e.target.checked)} disabled={running} /> Omitir el modo Básico (archivos muy grandes)
           </label>
-          <button className="btn primary" style={{ alignSelf: 'end' }} onClick={() => void run()} disabled={running} data-testid="bench-run">{running ? 'Midiendo…' : 'Ejecutar benchmark'}</button>
+          <button className="btn primary" onClick={() => void run()} disabled={running} data-testid="bench-run">{running ? 'Midiendo…' : 'Comparar'}</button>
         </div>
         <p className="small muted" style={{ margin: 0 }}>
-          Tu equipo reporta {cores || '?'} núcleos lógicos. Con el hilo principal la página <b>se congelará</b> mientras dure su medición; es lo que se quiere demostrar.
-          {rows >= 500_000 && ' Con ≥ 500 000 registros puede tardar bastante.'}
+          Mientras se mide el modo <b>Básico</b> la página se quedará quieta unos segundos: es justo la diferencia que se quiere mostrar.
+          {rows >= 500_000 && ' Con 500.000 registros o más puede tardar bastante.'}
         </p>
         {status && <p className="small" role="status" style={{ margin: 0 }}>{status}</p>}
         {error && <p className="alert error" role="alert">{error}</p>}
