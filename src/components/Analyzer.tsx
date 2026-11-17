@@ -355,17 +355,17 @@ export default function Analyzer() {
       )}
 
       {runs.length > 0 && (
-        <section className="card" aria-label="Comparación de ejecuciones">
-          <h3>Comparación de ejecuciones en esta sesión</h3>
+        <section className="card" aria-label="Tus análisis en esta sesión">
+          <h3>Tus análisis en esta sesión</h3>
           <div className="table-scroll">
             <table className="plain">
-              <thead><tr><th>Archivo</th><th>Registros</th><th>Modo</th><th>Tiempo</th><th>Pausa más larga</th><th>Congelamientos</th><th>FPS</th></tr></thead>
+              <thead><tr><th>Archivo</th><th>Registros</th><th>Velocidad</th><th>Tiempo</th><th>Pausa más larga</th><th>Trabas</th><th>Fluidez (cuadros/s)</th></tr></thead>
               <tbody>
                 {runs.map((r) => (
                   <tr key={r.id}>
                     <td>{r.file}</td>
                     <td className="mono">{fmtInt(r.rows)}</td>
-                    <td>{MODE_LABEL[r.mode]}{r.mode === 'pool' ? ` (${r.workers})` : ''}</td>
+                    <td>{MODE_LABEL[r.mode]}</td>
                     <td className="mono">{fmtMs(r.ms)}</td>
                     <td className="mono" style={{ color: r.frames.maxGapMs > 100 ? 'var(--critical)' : undefined }}>{fmtMs(r.frames.maxGapMs)}</td>
                     <td className="mono">{r.frames.freezes}</td>
