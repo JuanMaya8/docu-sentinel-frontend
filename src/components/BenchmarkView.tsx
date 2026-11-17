@@ -111,7 +111,7 @@ export default function BenchmarkView() {
   return (
     <div className="stack">
       <header>
-        <p className="eyebrow">Comparar velocidad</p>
+        <p className="eyebrow">Prueba de rendimiento</p>
         <h1 style={{ fontSize: '2rem' }}>¿Cuánto cambia la velocidad?</h1>
         <p className="muted" style={{ maxWidth: 740 }}>
           Analizamos <b>el mismo archivo</b> con las tres velocidades (<b>Básico</b>, <b>En segundo plano</b> y <b>Rápido</b>) y medimos cuánto tarda
