@@ -11,17 +11,25 @@ const OVERSCAN = 8;
 const RISK_RANK: Record<RiskLevel, number> = { critical: 3, high: 2, medium: 1, low: 0 };
 type SortKey = 'score' | 'record' | 'risk';
 
+/** Lets the page point the table at a group of findings ("Ver los casos"). `nonce` makes repeated clicks work. */
+export interface TableFocus {
+  type?: AnomalyType;
+  urgentFirst?: boolean;
+  nonce: number;
+}
+
 /**
  * Report table: Registro · Tipo de anomalía · Nivel de riesgo · Campo afectado · Explicación.
  * Virtualised by hand (only ~20 rows exist in the DOM) so 200 000 findings scroll at 60 fps without any dependency.
  */
-export function ReportTable({ findings, onOpen, selected }: { findings: Finding[]; onOpen?: (f: Finding) => void; selected?: Finding | null }) {
+export function ReportTable({ findings, onOpen, selected, focus }: { findings: Finding[]; onOpen?: (f: Finding) => void; selected?: Finding | null; focus?: TableFocus | null }) {
   const [risk, setRisk] = useState<RiskLevel | ''>('');
   const [type, setType] = useState<AnomalyType | ''>('');
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<SortKey>('score');
   const [scrollTop, setScrollTop] = useState(0);
   const body = useRef<HTMLDivElement>(null);
+  const section = useRef<HTMLElement>(null);
   const deferredQuery = useDeferredValue(query);
 
   const presentTypes = useMemo(() => [...new Set(findings.map((f) => f.type))].sort((a, b) => TYPE_LABELS_ES[a].localeCompare(TYPE_LABELS_ES[b], 'es')), [findings]);
