@@ -430,6 +430,17 @@ table.plain tbody tr:hover { background: var(--surface-2); }
   .sev-cell { min-width: 0; }
 }
 
+/* ---- sign in ---- */
+.auth-page { max-width: 460px; margin: 8px auto 0; }
+.auth-wrap { display: grid; gap: 14px; }
+.auth-card { display: grid; gap: 16px; padding: 32px 28px; box-shadow: var(--shadow-2); }
+.auth-mark { justify-self: center; width: 52px; height: 52px; border-radius: 12px; }
+.auth-eyebrow { text-align: center; margin: 0; }
+.auth-title { font-size: 24px; line-height: 32px; text-align: center; margin: -8px 0 0; }
+.auth-intro { text-align: center; margin: -6px 0 0; }
+.auth-switch { text-align: center; margin: 0; }
+@media (max-width: 480px) { .auth-card { padding: 24px 18px; } }
+
 /* ---- page styles carried over (each screen replaces its block when redesigned) ---- */
 .meter { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; }
 .heartbeat { width: 74px; height: 74px; position: relative; border-radius: 50%; border: 3px solid var(--line); }
