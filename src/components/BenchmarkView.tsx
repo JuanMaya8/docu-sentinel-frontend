@@ -167,7 +167,7 @@ export default function BenchmarkView() {
             ))}
           </div>
           <div>
-            <h3>Pausa más larga de la interfaz <span className="muted small">(menos es mejor; &gt;100 ms se siente trabado)</span></h3>
+            <h3>Pausa más larga de la página <span className="muted small">(menos es mejor; más de 100 ms ya se siente trabada)</span></h3>
             {results.map((r) => (
               <div className="bench-bar" key={r.key}>
                 <span>{r.label}</span>
