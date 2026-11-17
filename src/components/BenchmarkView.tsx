@@ -6,6 +6,7 @@ import { FrameMonitor, type FrameStats } from '@/lib/frameMonitor';
 import { fmtBytes, fmtInt, fmtMs } from '@/lib/format';
 import { defaultWorkerCount, runAnalysis } from '@/lib/runner';
 import { LiveMeter } from './LiveMeter';
+import { MODE_LABEL } from '@/lib/modes';
 import { fmtNum } from '@/engine';
 
 interface Result {
