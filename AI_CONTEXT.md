@@ -89,7 +89,7 @@ Nuevo en v0.2.0:
 3. **El archivo original nunca sale del navegador.** Solo hallazgos y matrices numéricas van al backend.
 4. **Contrato**: si cambias `Finding`, `SaveAnalysisDto`, `BaselineDto`, la convención de características o los eventos, actualiza `docs/CONTRACT.md` en los **tres** repos.
 5. Textos al usuario en español con formato es-CO (`fmtNum` en `i18n/es.ts`: `1.234,5`).
-6. **Sin jerga técnica en la interfaz**: el usuario final no sabe qué es un Web Worker ni un hilo. Los modos se muestran como velocidades (`src/lib/modes.ts`: `main` → *Básico*, `worker` → *En segundo plano*, `pool` → *Rápido*) y la ruta `/benchmark` se llama *Comparar velocidad*. Los términos técnicos solo van en el código y en la documentación.
+6. **Pensado para el usuario final**: la interfaz no habla de Web Workers, hilos ni velocidades. `/analizar` usa siempre el modo `pool` (el más rápido) sin preguntar, muestra el tiempo restante y, en los resultados, **«Qué revisar primero»** (`ActionPlan.tsx`: problemas agrupados con un consejo y un botón que filtra la tabla). La comparación hilo principal vs workers que pide el enunciado sigue en `/benchmark` (*Prueba de rendimiento*), enlazada solo desde el pie de página.
 7. Sin dependencias nuevas de UI/gráficos sin necesidad (todo es SVG/CSS propios).
 
 ## 5. Comandos de verificación
