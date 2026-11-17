@@ -39,7 +39,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <div className="wrap">{children}</div>
         </main>
         <footer className="site-footer">
-          <div className="wrap">Tus archivos se analizan en este navegador y no se suben a ningún servidor. Solo se guarda el reporte si tú lo decides.</div>
+          <div className="wrap row spread">
+            <span>Tus archivos se analizan en este navegador y no se suben a ningún servidor. Solo se guarda el reporte si tú lo decides.</span>
+            <Link href="/benchmark" className="footer-link">Prueba de rendimiento</Link>
+          </div>
         </footer>
       </body>
     </html>
