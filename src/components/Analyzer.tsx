@@ -155,13 +155,11 @@ export default function Analyzer() {
     const controller = new AbortController();
     abortRef.current = controller;
     const id = ++runId.current;
-    // let React paint the "running" state before the main-thread mode starts blocking
+    // let React paint the "running" state first
     await new Promise((r) => setTimeout(r, 60));
-    monitor.start();
-    const t0 = performance.now();
+    setStartedAt(performance.now());
     try {
-      const out = await runAnalysis({ file, fileName: name, mode, workers, options, signal: controller.signal, onProgress: setProgress });
-      const frames = monitor.stop();
+      const out = await runAnalysis({ file, fileName: name, mode: MODE, workers, options, signal: controller.signal, onProgress: setProgress });
       if (id !== runId.current) {
         out.session.dispose();
         return;
