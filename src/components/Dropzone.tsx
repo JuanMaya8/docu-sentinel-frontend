@@ -27,8 +27,8 @@ export function Dropzone({ onFile, disabled }: { onFile: (f: File) => void; disa
       onDrop={onDrop}
       style={disabled ? { opacity: 0.6, pointerEvents: 'none' } : undefined}
     >
-      <strong>Arrastra un archivo aquí o haz clic para elegirlo</strong>
-      <span className="muted small">CSV, TSV, JSON, NDJSON, Excel (.xlsx) o PDF con tablas · el archivo no sale de tu navegador</span>
+      <strong>Arrastra tu archivo aquí o haz clic para elegirlo</strong>
+      <span className="muted small">CSV, TSV, JSON, NDJSON, Excel (.xlsx) o PDF con tablas · el archivo no se sube a ningún servidor</span>
       <input
         ref={input}
         type="file"
