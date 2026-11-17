@@ -118,7 +118,7 @@ export async function analyzeFile(
 
   // ---------------------------------------------------------------- PARSE
   t = now();
-  report('parse', 0, 'Leyendo y perfilando registros…');
+  report('parse', 0, 'Leyendo los registros…');
   const shards = buildShardRequests(plan, pool.size, blocking, file);
   const shardCount = shards.length;
   const bytesPerShard = new Array<number>(shardCount).fill(0);
