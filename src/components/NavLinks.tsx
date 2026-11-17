@@ -15,7 +15,7 @@ export function NavLinks() {
     <nav className="nav" aria-label="Principal">
       {LINKS.map((l) => (
         <Link key={l.href} href={l.href} aria-current={path.startsWith(l.href) ? 'page' : undefined}>
-          {l.label}
+          {l.short ? (<><span className="nav-long">{l.label}</span><span className="nav-short">{l.short}</span></>) : l.label}
         </Link>
       ))}
     </nav>
