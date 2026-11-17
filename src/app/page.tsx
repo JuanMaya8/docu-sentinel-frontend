@@ -60,11 +60,11 @@ export default function HomePage() {
       </section>
 
       <section className="card" aria-labelledby="dif">
-        <h2 id="dif">El diferencial: se nota la diferencia</h2>
+        <h2 id="dif">Rápido aunque el archivo sea enorme</h2>
         <p>
-          En <Link href="/analizar">Analizar</Link> eliges el modo de procesamiento: <b>Hilo principal</b> (todo en la interfaz), <b>1 worker</b> o
-          <b> varios workers en paralelo</b>. Un medidor en vivo muestra los cuadros por segundo y la pausa más larga. En
-          <Link href="/benchmark"> Benchmark</Link> se ejecutan los tres modos sobre el mismo archivo y se comparan tiempo total y congelamientos.
+          En <Link href="/analizar">Analizar</Link> eliges la velocidad: <b>Rápido</b> reparte el archivo en partes que se revisan al mismo tiempo,
+          <b> En segundo plano</b> lo revisa sin trabar la página y <b>Básico</b> lo hace todo de una vez. Un medidor en vivo muestra si la página se
+          traba. En <Link href="/benchmark">Comparar velocidad</Link> se analiza el mismo archivo con las tres y se comparan el tiempo y la fluidez.
         </p>
       </section>
     </div>
