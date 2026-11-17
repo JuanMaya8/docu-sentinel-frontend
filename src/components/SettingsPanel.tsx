@@ -83,8 +83,8 @@ export function SettingsPanel({ value, onChange, baselines, baselinesError, disa
           ))}
         </div>
         <div className="field" style={{ maxWidth: 420 }}>
-          <label htmlFor="keys">Columna(s) clave para duplicados (opcional, separadas por coma)</label>
-          <input id="keys" className="input" placeholder="se detecta sola, p. ej. invoice_number" value={value.keyColumns} onChange={(e) => set('keyColumns', e.target.value)} />
+          <label htmlFor="keys">Columna que identifica cada registro, para buscar duplicados (opcional; varias, separadas por coma)</label>
+          <input id="keys" className="input" placeholder="se detecta sola, p. ej. numero_factura" value={value.keyColumns} onChange={(e) => set('keyColumns', e.target.value)} />
         </div>
       </details>
     </fieldset>
