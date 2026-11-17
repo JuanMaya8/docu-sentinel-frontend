@@ -389,6 +389,11 @@ table.plain td.mono { white-space: nowrap; }
 .diag-meta { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 10px 0 0; padding-top: 8px; border-top: 1px dashed var(--line-strong); font-size: 12px; }
 .diag-meta dt { color: var(--muted); }
 .diag-meta dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
+.kvtable { width: 100%; border-collapse: collapse; font-size: 12px; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.kvtable td, .kvtable th { padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; }
+.kvtable th { color: var(--muted); width: 40%; background: var(--bg); }
+.kvtable tr.hl td, .kvtable tr.hl th { background: color-mix(in srgb, var(--critical) 9%, var(--surface)); color: var(--ink); }
+.kvtable tr.hl th::before { content: '● '; color: var(--critical-text); }
 @media (max-width: 720px) {
   .drawer { width: 100vw; border-left: 0; padding: 16px; }
   .drawer::before { display: none; }
