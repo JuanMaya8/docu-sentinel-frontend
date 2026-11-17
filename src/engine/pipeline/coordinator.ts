@@ -150,7 +150,7 @@ export async function analyzeFile(
 
   // ---------------------------------------------------------------- MERGE + STATS
   t = now();
-  report('stats', 0, 'Calculando estadísticas globales…', { rows: totalRows });
+  report('stats', 0, 'Calculando qué es normal en cada columna…', { rows: totalRows });
   const merged: PartialProfile = mergePartials(parsed.map((p) => p.partial));
   const columns = buildColumnProfiles(plan.header, merged, options);
   const keyColumn = pickKeyColumn(columns, options.keyColumns);
