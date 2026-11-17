@@ -7,7 +7,7 @@ import { fmtNum } from '@/engine';
 
 /**
  * A dot orbiting a ring, moved by JavaScript on every animation frame (not by CSS), plus live FPS numbers.
- * When the main thread is blocked the dot literally stops: that is the visible proof of Main Thread vs Workers.
+ * When the main thread is blocked the dot literally stops: that is the visible difference between the modes.
  */
 export function LiveMeter({ monitor, active, stats: finalStats }: { monitor: FrameMonitor; active: boolean; stats?: FrameStats }) {
   const dot = useRef<HTMLElement>(null);
