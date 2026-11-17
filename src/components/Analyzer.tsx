@@ -272,8 +272,8 @@ export default function Analyzer() {
       )}
 
       <Dropzone onFile={(f) => void start(f, f.name)} disabled={busy} />
-      <div className="row small">
-        <span className="muted">¿Sin archivo a la mano? Genera datos de ejemplo con anomalías conocidas:</span>
+      <div className="row small sample-row">
+        <span className="muted">¿No tienes un archivo a la mano? Prueba con datos de ejemplo que traen errores a propósito:</span>
         <select className="input" aria-label="Tipo de datos de ejemplo" value={sampleKind} onChange={(e) => setSampleKind(e.target.value as SynthKind)} disabled={busy}>
           {SAMPLE_KINDS.map(([k, l]) => (<option key={k} value={k}>{l}</option>))}
         </select>
