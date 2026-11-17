@@ -32,12 +32,12 @@ export default function HomePage() {
         <h2 id="como">Cómo funciona</h2>
         <div className="pipeline">
           {[
-            ['1 · PLAN', 'Detecta formato y parte el archivo en bloques para N workers.'],
-            ['2 · LECTURA', 'Cada worker lee su bloque y perfila las columnas.'],
-            ['3 · ESTADÍSTICAS', 'Cuantiles y conteos mezclables: el resultado no depende de cuántos workers haya.'],
-            ['4 · IA', 'Isolation Forest + coherencia multivariante, local o con línea base histórica.'],
-            ['5 · DETECCIÓN', 'Cada worker aplica las reglas y el modelo a sus registros.'],
-            ['6 · REPORTE', 'Se une, se ordena y se explica cada hallazgo.'],
+            ['1 · LECTURA', 'Reconoce el formato (CSV, JSON, Excel o PDF) y lee cada registro.'],
+            ['2 · PERFIL', 'Aprende cómo son normalmente tus columnas: tipos, rangos y valores frecuentes.'],
+            ['3 · REGLAS', 'Busca duplicados, vacíos, formatos inválidos y relaciones que no cuadran.'],
+            ['4 · IA', 'Un modelo aprende el patrón normal de tus datos (o de tu histórico) y señala lo que se aparta.'],
+            ['5 · RIESGO', 'Cada hallazgo recibe un nivel de riesgo: bajo, medio, alto o crítico.'],
+            ['6 · REPORTE', 'Registro, campo afectado y explicación en español, listo para descargar o guardar.'],
           ].map(([t, d]) => (
             <div className="step" key={t}>
               <b>{t}</b>
