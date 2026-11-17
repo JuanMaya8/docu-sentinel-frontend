@@ -60,12 +60,14 @@ export default function HomePage() {
       </section>
 
       <section className="card" aria-labelledby="dif">
-        <h2 id="dif">Rápido aunque el archivo sea enorme</h2>
-        <p>
-          En <Link href="/analizar">Analizar</Link> eliges la velocidad: <b>Rápido</b> reparte el archivo en partes que se revisan al mismo tiempo,
-          <b> En segundo plano</b> lo revisa sin trabar la página y <b>Básico</b> lo hace todo de una vez. Un medidor en vivo muestra si la página se
-          traba. En <Link href="/benchmark">Comparar velocidad</Link> se analiza el mismo archivo con las tres y se comparan el tiempo y la fluidez.
-        </p>
+        <h2 id="dif">Por qué usarlo</h2>
+        <ul className="benefits">
+          <li><b>Privado:</b> el archivo se revisa en tu navegador; no se sube a ningún servidor.</li>
+          <li><b>Para archivos grandes:</b> cientos de miles de registros en segundos, sin que la página se trabe.</li>
+          <li><b>Explicado en español:</b> cada hallazgo dice qué registro, qué campo y por qué se marcó.</li>
+          <li><b>Aprende de tu historia:</b> guarda un archivo como referencia y la IA marca lo que se sale de lo normal en los siguientes.</li>
+          <li><b>Listo para compartir:</b> descarga el resultado para Excel o guárdalo en tu historial.</li>
+        </ul>
       </section>
     </div>
   );
