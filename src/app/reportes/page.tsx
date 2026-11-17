@@ -80,7 +80,7 @@ export default async function ReportsPage() {
                       {a.byRisk.critical + a.byRisk.high === 0 && <RiskChip risk={a.byRisk.medium > 0 ? 'medium' : 'low'} />}
                     </span>
                   </td>
-                  <td className="small">{modeLabel(a.mode)} · {fmtMs(a.durationMs)}</td>
+                  <td className="small">revisado en {fmtMs(a.durationMs)}</td>
                 </tr>
               ))}
             </tbody>
