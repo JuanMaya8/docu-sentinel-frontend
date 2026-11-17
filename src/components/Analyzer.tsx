@@ -147,7 +147,7 @@ export default function Analyzer() {
     setSelected(null);
     setSaveMsg(null);
     setError(null);
-    setFinalFrames(undefined);
+    setFocus(null);
     setFellBack(false);
     setProgress(null);
     setFileInfo({ name, size: file.size });
