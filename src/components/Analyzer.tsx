@@ -33,20 +33,22 @@ const SAMPLE_KINDS: Array<[SynthKind, string]> = [['invoices', 'Facturas (CSV)']
 const SAMPLE_SIZES = [10_000, 50_000, 200_000, 500_000];
 const MAX_SAVED_FINDINGS = 100_000;
 
-interface RunRow {
-  id: number;
-  file: string;
-  rows: number;
-  mode: ProcessingMode;
-  workers: number;
-  ms: number;
-  frames: FrameStats;
+/** Always the fastest way available: the file is split in parts that are checked at the same time, off the page. */
+const MODE: ProcessingMode = 'pool';
+
+/** "faltan unos 8 s", estimated from the progress so far. */
+function timeLeft(p: Progress | null, startedAt: number): string {
+  if (!p || p.overall < 0.08 || p.overall >= 1 || !startedAt) return '';
+  const elapsed = performance.now() - startedAt;
+  const left = (elapsed * (1 - p.overall)) / p.overall;
+  if (left < 1500) return 'casi listo';
+  if (left < 60_000) return `faltan unos ${Math.ceil(left / 1000)} s`;
+  return `faltan unos ${Math.ceil(left / 60_000)} min`;
 }
 
 type Phase = 'idle' | 'generating' | 'running' | 'done' | 'error';
 
 export default function Analyzer() {
-  const [mode, setMode] = useState<ProcessingMode>('pool');
   const [workers, setWorkers] = useState(4);
   const [settings, setSettings] = useState<UiSettings>({
     sensitivity: 'medium',
