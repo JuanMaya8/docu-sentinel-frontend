@@ -72,8 +72,8 @@ export function SettingsPanel({ value, onChange, baselines, baselinesError, disa
         </div>
       )}
 
-      <details style={{ marginTop: 14 }}>
-        <summary className="small" style={{ cursor: 'pointer', fontWeight: 600 }}>Avanzado: detectores y columna clave</summary>
+      <details className="more-options">
+        <summary className="small" style={{ cursor: 'pointer', fontWeight: 600 }}>Más opciones: qué revisar y columna identificadora</summary>
         <div className="row" style={{ margin: '10px 0' }}>
           {(Object.keys(DETECTOR_LABELS) as DetectorId[]).map((d) => (
             <label key={d} className="chip" style={{ cursor: 'pointer' }}>
