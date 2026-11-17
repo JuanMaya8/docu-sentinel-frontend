@@ -148,7 +148,7 @@ export default function BenchmarkView() {
 
       {(running || results.length > 0) && (
         <section className="card" aria-label="Medidor en vivo">
-          <h3>Fluidez de la interfaz</h3>
+          <h3>Fluidez de la página en vivo</h3>
           <LiveMeter monitor={monitor} active={running} stats={final} />
         </section>
       )}
