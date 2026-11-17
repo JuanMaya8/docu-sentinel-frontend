@@ -24,13 +24,6 @@ export function ModeSelector({ mode, onMode, disabled }: {
           </button>
         ))}
       </div>
-      {mode === 'pool' && (
-        <div className="row" style={{ marginTop: 12 }}>
-          <label className="small muted" htmlFor="workers">Workers en paralelo</label>
-          <input id="workers" className="input" type="number" min={2} max={maxWorkers} value={workers} onChange={(e) => onWorkers(Math.max(2, Math.min(maxWorkers, Number(e.target.value) || 2)))} style={{ width: 72 }} />
-          <span className="small muted">tu equipo reporta {maxWorkers + 1} núcleos lógicos</span>
-        </div>
-      )}
     </fieldset>
   );
 }
