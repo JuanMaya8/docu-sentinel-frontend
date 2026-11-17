@@ -65,7 +65,7 @@ El backend tiene un `docker-compose.yml` que levanta backend + IA juntos.
 ```
                     ┌─────────────────────────── NAVEGADOR ───────────────────────────┐
   archivo ─────────►│  Next.js 14 (App Router) · React 18                               │
-  (CSV/JSON/PDF)    │   ├─ UI: dropzone · modos · progreso · medidor FPS · tabla virtual │
+  (CSV/JSON/PDF)    │   ├─ UI: dropzone · progreso · plan de acción · tabla virtual       │
                     │   └─ Coordinador (hilo principal, solo enruta y mezcla cosas chicas)│
                     │        │  postMessage (tipado)                                      │
                     │   ┌────▼────┐ ┌─────────┐ ┌─────────┐        Web Workers            │
