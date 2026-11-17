@@ -172,7 +172,7 @@ export async function analyzeFile(
 
   // ---------------------------------------------------------------- ML
   t = now();
-  report('features', 0, 'Preparando el modelo de anomalías…');
+  report('features', 0, 'Preparando la inteligencia artificial…');
   let forest: ForestModel | null = null;
   let spec: FeatureSpec[] | null = null;
   let remote: RemoteMlResult[] | null = null;
