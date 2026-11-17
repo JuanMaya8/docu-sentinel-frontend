@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { Finding } from '@/engine';
 import { api, errorMessage } from '@/lib/api';
+import { Icon } from './Icon';
 import { RecordDrawer } from './RecordDrawer';
 import { ReportTable } from './ReportTable';
 
@@ -34,14 +35,20 @@ export function SavedReportView({ id, fileName, findings, total }: { id: string;
 
   return (
     <div className="stack">
-      <div className="row">
-        <button className="btn" onClick={() => void download('csv')}>Descargar CSV completo</button>
-        <button className="btn" onClick={() => void download('json')}>Descargar JSON</button>
-        <button className="btn danger" onClick={() => void remove()}>Eliminar reporte</button>
-        {total > findings.length && <span className="small muted">Se muestran los {findings.length.toLocaleString('es-CO')} hallazgos de mayor puntaje de {total.toLocaleString('es-CO')}; el CSV y el JSON traen todos.</span>}
-      </div>
+      {total > findings.length && <p className="alert small">Se muestran los {findings.length.toLocaleString('es-CO')} hallazgos de mayor puntaje de {total.toLocaleString('es-CO')}; el CSV y el JSON traen todos.</p>}
       {error && <p className="alert error" role="alert">{error}</p>}
-      <ReportTable findings={findings} selected={selected} onOpen={setSelected} />
+      <ReportTable
+        findings={findings}
+        selected={selected}
+        onOpen={setSelected}
+        actions={
+          <>
+            <button className="btn" onClick={() => void download('csv')}><Icon name="download" size={16} /> Descargar CSV completo</button>
+            <button className="btn" onClick={() => void download('json')}><Icon name="download" size={16} /> Descargar JSON</button>
+            <button className="btn danger" onClick={() => void remove()}><Icon name="trash" size={16} /> Eliminar reporte</button>
+          </>
+        }
+      />
       {selected && <RecordDrawer finding={selected} findings={findings} onClose={() => setSelected(null)} />}
     </div>
   );

@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Icon, type IconName } from '@/components/Icon';
 import { RealtimeRefresher } from '@/components/RealtimeRefresher';
-import { RiskChip } from '@/components/Summary';
+import { RISK_COLOR } from '@/components/Summary';
 import { errorMessage, isAuthError, type AnalysisSummary } from '@/lib/api';
 import { serverApi } from '@/lib/serverApi';
-import { fmtBytes, fmtDate, fmtInt, fmtMs } from '@/lib/format';
+import { RISK_ORDER, fmtBytes, fmtDate, fmtInt, fmtMs } from '@/lib/format';
 
 export const metadata: Metadata = { title: 'Historial de reportes' };
 // SSR: always fresh data from the backend, rendered on the server for each request.
@@ -12,6 +13,18 @@ export const metadata: Metadata = { title: 'Historial de reportes' };
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
+const FORMAT_ICON: Record<string, IconName> = { csv: 'table', tsv: 'table', xlsx: 'table', json: 'braces', ndjson: 'braces', pdf: 'file' };
+
+/** Stacked bar of the findings by risk level (the colour is never alone: the counts are written next to it). */
+function RiskBar({ byRisk }: { byRisk: AnalysisSummary['byRisk'] }) {
+  const total = RISK_ORDER.reduce((s, r) => s + (byRisk[r] ?? 0), 0);
+  if (total === 0) return null;
+  return (
+    <span className="risk-bar" aria-hidden="true">
+      {RISK_ORDER.map((r) => ((byRisk[r] ?? 0) > 0 ? <i key={r} style={{ flexGrow: byRisk[r], background: RISK_COLOR[r] }} /> : null))}
+    </span>
+  );
+}
 
 export default async function ReportsPage() {
   let items: AnalysisSummary[] = [];
@@ -27,12 +40,18 @@ export default async function ReportsPage() {
     else error = errorMessage(e);
   }
 
+  const partial = total > items.length;
+  const rows = items.reduce((s, a) => s + a.rows, 0);
+  const critical = items.reduce((s, a) => s + (a.byRisk.critical ?? 0), 0);
+  const clean = items.filter((a) => a.findingsCount === 0).length;
+
   return (
-    <div className="stack">
-      <header className="row spread">
+    <div className="stack reports">
+      <header className="page-head">
         <div>
           <p className="eyebrow">Historial</p>
-          <h1 style={{ fontSize: '2rem', margin: 0 }}>Reportes guardados</h1>
+          <h1>Reportes guardados</h1>
+          <p>Los reportes que guardaste desde Analizar. Se guardan en tu cuenta; el archivo original nunca se sube.</p>
         </div>
         <RealtimeRefresher />
       </header>
@@ -46,47 +65,95 @@ export default async function ReportsPage() {
       )}
 
       {needsLogin && (
-        <div className="card">
-          <p style={{ margin: 0 }}>Tu historial es privado. <Link href="/ingresar?next=/reportes">Ingresa</Link> para ver tus reportes guardados.</p>
+        <div className="card empty-state">
+          <span className="icon-tile"><Icon name="lock" /></span>
+          <div>
+            <h2 className="card-title">Tu historial es privado</h2>
+            <p className="small muted" style={{ margin: '2px 0 12px' }}>Ingresa para ver los reportes que guardaste.</p>
+            <Link className="btn primary" href="/ingresar?next=/reportes"><Icon name="logIn" size={16} /> Ingresar</Link>
+          </div>
         </div>
       )}
 
       {!error && !needsLogin && items.length === 0 && (
-        <div className="card">
-          <p style={{ margin: 0 }}>Todavía no hay reportes. <Link href="/analizar">Analiza un archivo</Link> y pulsa «Guardar en historial».</p>
+        <div className="card empty-state">
+          <span className="icon-tile"><Icon name="history" /></span>
+          <div>
+            <h2 className="card-title">Todavía no hay reportes</h2>
+            <p className="small muted" style={{ margin: '2px 0 12px' }}>Analiza un archivo y pulsa «Guardar en historial».</p>
+            <Link className="btn primary" href="/analizar"><Icon name="play" size={14} /> Analizar un archivo</Link>
+          </div>
         </div>
       )}
 
       {items.length > 0 && (
-        <div className="card table-scroll">
-          <table className="plain">
-            <thead>
-              <tr><th>Archivo</th><th>Fecha</th><th>Registros</th><th>Hallazgos</th><th>Riesgo</th><th>Procesamiento</th></tr>
-            </thead>
-            <tbody>
-              {items.map((a) => (
-                <tr key={a.id}>
-                  <td>
-                    <Link href={`/reportes/${a.id}`}><b>{a.fileName}</b></Link>
-                    <div className="small muted">{a.format.toUpperCase()} · {fmtBytes(a.fileSizeBytes)}</div>
-                  </td>
-                  <td className="small">{fmtDate(a.createdAt)}</td>
-                  <td className="mono">{fmtInt(a.rows)}</td>
-                  <td className="mono">{fmtInt(a.findingsCount)}</td>
-                  <td>
-                    <span className="row" style={{ gap: 6 }}>
-                      {a.byRisk.critical > 0 && <RiskChip risk="critical" />}
-                      {a.byRisk.high > 0 && <RiskChip risk="high" />}
-                      {a.byRisk.critical + a.byRisk.high === 0 && <RiskChip risk={a.byRisk.medium > 0 ? 'medium' : 'low'} />}
-                    </span>
-                  </td>
-                  <td className="small">revisado en {fmtMs(a.durationMs)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {total > items.length && <p className="small muted">Mostrando {items.length} de {fmtInt(total)}.</p>}
-        </div>
+        <>
+          <div className="grid cols-3 stats">
+            <div className="card stat">
+              <span className="stat-label">Reportes guardados <Icon name="history" size={16} /></span>
+              <b>{fmtInt(total)}</b>
+              <span>{clean > 0 ? `${fmtInt(clean)} sin hallazgos` : 'en tu historial'}</span>
+            </div>
+            <div className="card stat">
+              <span className="stat-label">Registros revisados <Icon name="table" size={16} /></span>
+              <b>{fmtInt(rows)}</b>
+              <span>{partial ? `en los ${fmtInt(items.length)} más recientes` : 'en todos tus reportes'}</span>
+            </div>
+            <div className="card stat">
+              <span className="stat-label">Hallazgos críticos <Icon name="alert" size={16} /></span>
+              <b style={{ color: critical > 0 ? 'var(--critical-text)' : undefined }}>{fmtInt(critical)}</b>
+              <span>{partial ? `en los ${fmtInt(items.length)} más recientes` : 'en todos tus reportes'}</span>
+            </div>
+          </div>
+
+          <div className="card table-card">
+            <div className="table-card-head">
+              <h2 className="card-title">Reportes <span className="tag">{fmtInt(total)}</span></h2>
+              {partial && <span className="small muted">Mostrando los {fmtInt(items.length)} más recientes de {fmtInt(total)}</span>}
+            </div>
+            <div className="table-scroll">
+              <table className="plain history">
+                <thead>
+                  <tr><th>Archivo</th><th>Fecha</th><th>Registros</th><th>Hallazgos y severidad</th><th>Tiempo</th><th><span className="sr-only">Acciones</span></th></tr>
+                </thead>
+                <tbody>
+                  {items.map((a) => (
+                    <tr key={a.id}>
+                      <td data-label="Archivo">
+                        <span className="file-cell">
+                          <span className="file-icon"><Icon name={FORMAT_ICON[a.format] ?? 'file'} size={18} /></span>
+                          <span>
+                            <Link href={`/reportes/${a.id}`} className="file-name">{a.fileName}</Link>
+                            <span className="small muted mono">{a.format.toUpperCase()} · {fmtBytes(a.fileSizeBytes)}</span>
+                          </span>
+                        </span>
+                      </td>
+                      <td data-label="Fecha" className="small">{fmtDate(a.createdAt)}</td>
+                      <td data-label="Registros" className="mono">{fmtInt(a.rows)}</td>
+                      <td data-label="Hallazgos">
+                        {a.findingsCount === 0 ? (
+                          <span className="chip ok"><Icon name="check" size={12} /> Sin hallazgos</span>
+                        ) : (
+                          <span className="sev-cell">
+                            <span className="row small" style={{ justifyContent: 'space-between', gap: 8 }}>
+                              <span>{fmtInt(a.findingsCount)} hallazgos</span>
+                              {a.byRisk.critical > 0 && <span style={{ color: 'var(--critical-text)', fontWeight: 600 }}>{fmtInt(a.byRisk.critical)} críticos</span>}
+                            </span>
+                            <RiskBar byRisk={a.byRisk} />
+                          </span>
+                        )}
+                      </td>
+                      <td data-label="Tiempo" className="mono small">{fmtMs(a.durationMs)}</td>
+                      <td className="cell-action">
+                        <Link className="btn sm" href={`/reportes/${a.id}`}>Abrir reporte <Icon name="chevronRight" size={14} /></Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
