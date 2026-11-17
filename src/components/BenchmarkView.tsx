@@ -178,7 +178,7 @@ export default function BenchmarkView() {
           </div>
           <div className="table-scroll">
             <table className="plain">
-              <thead><tr><th>Modo</th><th>Tiempo</th><th>Pausa más larga</th><th>Congelamientos</th><th>Tiempo congelado</th><th>FPS</th><th>Hallazgos</th></tr></thead>
+              <thead><tr><th>Velocidad</th><th>Tiempo</th><th>Pausa más larga</th><th>Trabas</th><th>Tiempo trabado</th><th>Fluidez (cuadros/s)</th><th>Hallazgos</th></tr></thead>
               <tbody>
                 {results.map((r) => (
                   <tr key={r.key}>
