@@ -28,7 +28,6 @@ export default function BenchmarkView() {
   const [kind, setKind] = useState<SynthKind>('invoices');
   const [rows, setRows] = useState(200_000);
   const [workers, setWorkers] = useState(4);
-  const [cores, setCores] = useState(0);
   const [skipMain, setSkipMain] = useState(false);
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState('');
