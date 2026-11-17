@@ -91,14 +91,14 @@ export function ReportTable({ findings, onOpen, selected, focus }: { findings: F
           <div className="field">
             <label htmlFor="f-sort">Ordenar por</label>
             <select id="f-sort" className="input" value={sort} onChange={(e) => { setSort(e.target.value as SortKey); resetScroll(); }}>
-              <option value="score">Puntaje (mayor primero)</option>
-              <option value="risk">Nivel de riesgo</option>
-              <option value="record">Número de registro</option>
+              <option value="score">Más importantes primero</option>
+              <option value="risk">Más urgentes primero</option>
+              <option value="record">En orden del archivo</option>
             </select>
           </div>
           <div className="field">
             <label htmlFor="f-q">Buscar</label>
-            <input id="f-q" className="input" type="search" placeholder="campo, texto o id…" value={query} onChange={(e) => { setQuery(e.target.value); resetScroll(); }} />
+            <input id="f-q" className="input" type="search" placeholder="campo, valor o número de registro…" value={query} onChange={(e) => { setQuery(e.target.value); resetScroll(); }} />
           </div>
         </div>
         <span className="small muted" aria-live="polite">{fmtInt(rows.length)} de {fmtInt(findings.length)} hallazgos</span>
