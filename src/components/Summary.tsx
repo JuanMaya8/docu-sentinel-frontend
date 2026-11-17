@@ -38,7 +38,7 @@ export function Summary({ data }: { data: SummaryData }) {
         <div className="card stat"><b>{fmtInt(data.recordsAffected)}</b><span>registros con problemas ({fmtPercent(share)})</span></div>
         <div className="card stat"><b style={{ color: 'var(--critical)' }}>{fmtInt((data.byRisk.critical ?? 0) + (data.byRisk.high ?? 0))}</b><span>de riesgo alto o crítico</span></div>
       </div>
-      <div className="grid cols-2">
+      <div className="grid cols-2" style={{ alignItems: 'start' }}>
         <section className="card" aria-label="Hallazgos por nivel de riesgo">
           <h3>Por nivel de riesgo</h3>
           <svg viewBox="0 0 100 10" width="100%" height="26" role="img" aria-label={RISK_ORDER.map((r) => `${RISK_LABELS_ES[r]}: ${data.byRisk[r] ?? 0}`).join(', ')} preserveAspectRatio="none" style={{ borderRadius: 6, overflow: 'hidden' }}>
