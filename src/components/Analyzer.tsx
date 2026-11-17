@@ -274,20 +274,20 @@ export default function Analyzer() {
         <button className="btn sm" onClick={() => void startSample()} disabled={busy} data-testid="sample-btn">Generar y analizar</button>
       </div>
 
-      <section className="card stack" aria-label="Opciones del análisis">
-        <div>
-          <h2 className="card-title">Opciones del análisis</h2>
-          <p className="small muted" style={{ margin: 0 }}>Puedes dejarlas como están. Se aplican al próximo archivo que analices.</p>
+      <details className="card settings-card">
+        <summary>
+          <b>Ajustes del análisis</b> <span className="small muted">(opcional: qué tan estricto ser, uso de la IA y formato de fechas)</span>
+        </summary>
+        <div style={{ marginTop: 14 }}>
+          <SettingsPanel value={settings} onChange={setSettings} baselines={baselines} baselinesError={baselinesError} disabled={busy} />
         </div>
-        <ModeSelector mode={mode} onMode={setMode} disabled={busy} />
-        <SettingsPanel value={settings} onChange={setSettings} baselines={baselines} baselinesError={baselinesError} disabled={busy} />
-      </section>
+      </details>
 
       {(busy || phase === 'done') && (
         <section className="card stack" aria-label="Progreso" aria-live="polite">
           <div className="row spread">
             <div>
-              <b>{fileInfo?.name}</b> <span className="muted small">{fileInfo ? fmtBytes(fileInfo.size) : ''} · {MODE_LABEL[mode]}</span>
+              <b>{fileInfo?.name}</b> <span className="muted small">{fileInfo ? fmtBytes(fileInfo.size) : ''}</span>
             </div>
             {busy && phase === 'running' && <button className="btn sm" onClick={cancel}>Cancelar</button>}
           </div>
