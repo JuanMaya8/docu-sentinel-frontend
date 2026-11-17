@@ -50,7 +50,7 @@ export default async function ReportDetailPage({ params }: { params: { id: strin
         <p className="eyebrow"><Link href="/reportes">← Historial</Link></p>
         <h1 style={{ fontSize: '2rem', marginBottom: 4 }}>{detail.fileName}</h1>
         <p className="muted small">
-          {detail.format.toUpperCase()} · {fmtBytes(detail.fileSizeBytes)} · {fmtDate(detail.createdAt)} · procesado en {fmtMs(detail.durationMs)} (velocidad {modeLabel(detail.mode)}) · sensibilidad {detail.sensitivity} · IA: {detail.mlMode}
+          {detail.format.toUpperCase()} · {fmtBytes(detail.fileSizeBytes)} · {fmtDate(detail.createdAt)} · revisado en {fmtMs(detail.durationMs)} · sensibilidad {detail.sensitivity} · IA: {detail.mlMode}
         </p>
       </header>
       <Summary data={{ rows: detail.rows, columns: detail.columnCount, findingsCount: detail.findingsCount, recordsAffected: detail.recordsAffected, byRisk: detail.byRisk, byType: detail.byType }} />
