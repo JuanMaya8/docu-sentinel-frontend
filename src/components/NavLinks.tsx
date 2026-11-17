@@ -3,9 +3,9 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const LINKS = [
+const LINKS: Array<{ href: string; label: string; short?: string }> = [
   { href: '/analizar', label: 'Analizar' },
-  { href: '/benchmark', label: 'Benchmark' },
+  { href: '/benchmark', label: 'Comparar velocidad', short: 'Velocidad' },
   { href: '/reportes', label: 'Reportes' },
 ];
 
