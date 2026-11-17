@@ -24,7 +24,7 @@ export const TYPE_LABELS_ES: Record<AnomalyType, string> = {
   suspicious_threshold: 'Valor justo bajo un umbral',
   suspicious_round: 'Valores redondos sospechosos',
   benford: 'Desviación de la ley de Benford',
-  multivariate_anomaly: 'Anomalía multivariante (IA)',
+  multivariate_anomaly: 'Registro inusual (IA)',
   mixed_types: 'Tipos mezclados en la columna',
 };
 
