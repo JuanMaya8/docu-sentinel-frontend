@@ -43,7 +43,7 @@ Solo si confirmas que el PID corresponde a un servidor antiguo, puedes detenerlo
 | `npm run verify:browser` | Verificación en **Chromium real** (Playwright + esbuild): Workers, PDF, cancelación y **benchmark Hilo principal vs Workers**. `SIZES=50000,200000,500000 REPS=2 npm run verify:browser`. La primera vez: `npx playwright install chromium` |
 | `docker build -t docu-sentinel-frontend --build-arg NEXT_PUBLIC_API_URL=https://tu-backend/api/v1 .` | Imagen de producción (Next *standalone*) |
 
-Rutas: `/` · `/analizar` · `/benchmark` · `/reportes` · `/reportes/[id]`.
+Rutas: `/` · `/analizar` · `/benchmark` · `/reportes` · `/reportes/[id]`. La interfaz está pensada para el usuario final: `/analizar` usa siempre el procesamiento más rápido (varios Web Workers) sin pedir que se elija, y la comparación Hilo principal vs Workers está en `/benchmark` (*Prueba de rendimiento*, enlazada desde el pie de página).
 Para probar sin archivos, en **Analizar** pulsa «Generar y analizar» (datos de ejemplo con anomalías conocidas).
 
 ### Demo rápida (sin backend ni archivos)
