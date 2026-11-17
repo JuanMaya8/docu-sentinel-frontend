@@ -82,7 +82,7 @@ export function ReportTable({ findings, onOpen, selected, focus }: { findings: F
             </select>
           </div>
           <div className="field">
-            <label htmlFor="f-type">Tipo de anomalía</label>
+            <label htmlFor="f-type">Tipo de problema</label>
             <select id="f-type" className="input" value={type} onChange={(e) => { setType(e.target.value as AnomalyType | ''); resetScroll(); }}>
               <option value="">Todos</option>
               {presentTypes.map((t) => (<option key={t} value={t}>{TYPE_LABELS_ES[t]}</option>))}
