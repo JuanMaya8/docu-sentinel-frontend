@@ -71,7 +71,7 @@ export function ReportTable({ findings, onOpen, selected, focus }: { findings: F
   };
 
   return (
-    <section className="stack" aria-label="Reporte de anomalías">
+    <section ref={section} className="stack report-section" aria-label="Reporte de anomalías">
       <div className="row spread">
         <div className="row">
           <div className="field">
