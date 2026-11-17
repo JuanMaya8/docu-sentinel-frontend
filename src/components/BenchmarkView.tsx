@@ -196,12 +196,12 @@ export default function BenchmarkView() {
           </div>
           <p style={{ margin: 0 }}>
             {main && pool ? (
-              <>Con {pool.workers} workers el análisis fue <b>{fmtNum(main.ms / pool.ms, 1)}×</b> {main.ms >= pool.ms ? 'más rápido' : 'el tiempo'} que en el hilo principal y la pausa más larga bajó de <b>{fmtMs(main.frames.maxGapMs)}</b> a <b>{fmtMs(pool.frames.maxGapMs)}</b>. </>
+              <>El modo Rápido tardó <b>{fmtNum(main.ms / pool.ms, 1)}×</b> {main.ms >= pool.ms ? 'menos' : 'lo mismo'} que el Básico y la pausa más larga de la página bajó de <b>{fmtMs(main.frames.maxGapMs)}</b> a <b>{fmtMs(pool.frames.maxGapMs)}</b>. </>
             ) : null}
-            {identical ? '✓ Los tres modos produjeron exactamente los mismos hallazgos.' : results.length > 1 ? '⚠ Los modos no produjeron los mismos hallazgos: es un error, repórtalo.' : null}
+            {identical ? '✓ Las tres velocidades encontraron exactamente los mismos hallazgos.' : results.length > 1 ? '⚠ Las velocidades no encontraron los mismos hallazgos: es un error, repórtalo.' : null}
           </p>
           <p className="small muted" style={{ margin: 0 }}>
-            Nota: la ganancia de velocidad depende de los núcleos reales de tu equipo y del tamaño del archivo; la mejora en fluidez aparece siempre que se usa cualquier worker.
+            Nota: cuánto más rápido resulta depende de la potencia de tu equipo y del tamaño del archivo; en los modos En segundo plano y Rápido la página nunca se traba.
           </p>
         </section>
       )}
