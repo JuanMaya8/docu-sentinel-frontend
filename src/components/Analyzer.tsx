@@ -192,7 +192,6 @@ export default function Analyzer() {
   const cancel = (): void => {
     runId.current++;
     abortRef.current?.abort();
-    monitor.stop();
     setPhase('idle');
   };
 
