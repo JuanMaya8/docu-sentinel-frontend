@@ -31,7 +31,7 @@ export function SettingsPanel({ value, onChange, baselines, baselinesError, disa
 }) {
   const set = <K extends keyof UiSettings>(k: K, v: UiSettings[K]): void => onChange({ ...value, [k]: v });
   return (
-    <fieldset style={{ border: 0, padding: 0, margin: 0 }} disabled={disabled}>
+    <fieldset style={{ border: 0, padding: 0, minWidth: 0 }} disabled={disabled}>
       <div className="grid cols-3">
         <div className="field">
           <label htmlFor="sens">Sensibilidad</label>
