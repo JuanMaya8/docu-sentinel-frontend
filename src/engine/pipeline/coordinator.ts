@@ -190,7 +190,7 @@ export async function analyzeFile(
       else {
         try {
           spec = mapped.spec;
-          remote = await scoreAgainstBaseline(pool, shards.length, parsed, profile, spec, hooks.scoreBaseline, check, (f) => report('features', f, 'Puntuando con la línea base histórica…'));
+          remote = await scoreAgainstBaseline(pool, shards.length, parsed, profile, spec, hooks.scoreBaseline, check, (f) => report('features', f, 'Comparando con tu historial…'));
         } catch (e) {
           if (e instanceof AnalysisAborted) throw e;
           remote = null;
