@@ -283,6 +283,15 @@ export default function Analyzer() {
         <button className="btn sm" onClick={() => void startSample()} disabled={busy} data-testid="sample-btn">Generar y analizar</button>
       </div>
 
+      <section className="card stack" aria-label="Opciones del análisis">
+        <div>
+          <h2 className="card-title">Opciones del análisis</h2>
+          <p className="small muted" style={{ margin: 0 }}>Puedes dejarlas como están. Se aplican al próximo archivo que analices.</p>
+        </div>
+        <ModeSelector mode={mode} onMode={setMode} disabled={busy} />
+        <SettingsPanel value={settings} onChange={setSettings} baselines={baselines} baselinesError={baselinesError} disabled={busy} />
+      </section>
+
       {(busy || phase === 'done') && (
         <section className="card stack" aria-label="Progreso" aria-live="polite">
           <div className="row spread">
