@@ -111,16 +111,16 @@ export default function BenchmarkView() {
   return (
     <div className="stack">
       <header>
-        <p className="eyebrow">Diferencial</p>
-        <h1 style={{ fontSize: '2rem' }}>Hilo principal vs Web Workers</h1>
+        <p className="eyebrow">Comparar velocidad</p>
+        <h1 style={{ fontSize: '2rem' }}>¿Cuánto cambia la velocidad?</h1>
         <p className="muted" style={{ maxWidth: 740 }}>
-          Se analiza <b>el mismo archivo</b> tres veces: todo en el hilo de la interfaz, con un worker y con varios workers en paralelo. Se mide el tiempo total
-          y qué tan congelada queda la página (pausa más larga entre cuadros). El resultado del análisis debe ser idéntico en los tres.
+          Analizamos <b>el mismo archivo</b> con las tres velocidades (<b>Básico</b>, <b>En segundo plano</b> y <b>Rápido</b>) y medimos cuánto tarda
+          cada una y si la página se traba mientras trabaja. Los hallazgos deben ser exactamente los mismos en las tres.
         </p>
       </header>
 
       <section className="card stack">
-        <div className="row">
+        <div className="row" style={{ alignItems: 'flex-end' }}>
           <div className="field">
             <label htmlFor="b-kind">Datos</label>
             <select id="b-kind" className="input" value={kind} onChange={(e) => setKind(e.target.value as SynthKind)} disabled={running}>
