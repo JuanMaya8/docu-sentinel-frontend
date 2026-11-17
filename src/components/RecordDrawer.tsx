@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { TYPE_LABELS_ES, type Finding } from '@/engine';
 import { recordLabel } from '@/engine/exporters';
+import { Icon } from './Icon';
 import { RiskChip } from './Summary';
 
 export interface RecordData {
@@ -71,31 +72,41 @@ export function RecordDrawer({ finding, findings, loadRecord, onClose }: {
     <>
       <div className="drawer-backdrop" onClick={onClose} aria-hidden="true" />
       <aside ref={panel} className="drawer" role="dialog" aria-modal="true" aria-label={`Detalle del ${recordLabel(finding)}`}>
-        <div className="row spread">
-          <h2 style={{ margin: 0 }}>{recordLabel(finding)}</h2>
-          <button className="btn sm" onClick={onClose} autoFocus>Cerrar</button>
+        <div className="drawer-head">
+          <div>
+            <div className="row" style={{ gap: 8 }}>
+              <RiskChip risk={finding.risk} />
+              <span className="small muted mono">{finding.recordId ? `ID: ${finding.recordId}` : ''}</span>
+            </div>
+            <h2 className="drawer-title">Detalle del {recordLabel(finding)}</h2>
+          </div>
+          <button className="btn sm icon-btn" onClick={onClose} autoFocus aria-label="Cerrar"><Icon name="x" size={18} /></button>
         </div>
-        <h3 style={{ marginTop: 18 }}>Hallazgos de este registro ({same.length})</h3>
+        <h3 className="drawer-sub">Hallazgos de este registro ({same.length})</h3>
         <div className="stack">
           {same.map((f, i) => (
-            <div key={i} className="card flat" style={{ padding: 12 }}>
+            <div key={i} className={`diag risk-${f.risk}`}>
               <div className="row spread">
-                <b>{TYPE_LABELS_ES[f.type]}</b>
+                <b className="row" style={{ gap: 6 }}><Icon name="alert" size={15} /> {TYPE_LABELS_ES[f.type]}</b>
                 <RiskChip risk={f.risk} />
               </div>
               <p className="small" style={{ margin: '6px 0 0' }}>{f.explanation}</p>
-              <p className="small muted mono" style={{ margin: '4px 0 0' }}>campo: {f.field ?? '—'} · puntaje {Math.round(f.score)} · {f.detector}</p>
+              <dl className="diag-meta">
+                <dt>Campo</dt><dd className="mono">{f.field ?? '—'}</dd>
+                <dt>Puntaje</dt><dd className="mono">{Math.round(f.score)}</dd>
+                <dt>Detector</dt><dd className="mono">{f.detector}</dd>
+              </dl>
             </div>
           ))}
         </div>
         {idx !== null && (
           <>
-            <h3 style={{ marginTop: 22 }}>Registro original</h3>
+            <h3 className="drawer-sub">Registro original</h3>
             {!loadRecord && <p className="small muted">El archivo original no se guarda; el detalle solo está disponible mientras el análisis sigue abierto en este navegador.</p>}
             {loadRecord && !record && !error && <div className="skeleton" style={{ height: 120 }} aria-label="Cargando registro" role="status" />}
             {error && <p className="alert error small" role="alert">{error}</p>}
             {record && (
-              <table className="kvtable" aria-label="Valores del registro original; los campos con hallazgos están resaltados">
+              <table className="kvtable mono" aria-label="Valores del registro original; los campos con hallazgos están resaltados">
                 <tbody>
                   {record.header.map((h, i) => (
                     <tr key={i} className={affected.has(h) ? 'hl' : undefined}>

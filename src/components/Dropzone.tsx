@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, type DragEvent } from 'react';
+import { Icon } from './Icon';
 
 const ACCEPT = '.csv,.tsv,.txt,.json,.ndjson,.jsonl,.pdf,.xlsx,.xlsm';
 
@@ -27,8 +28,13 @@ export function Dropzone({ onFile, disabled }: { onFile: (f: File) => void; disa
       onDrop={onDrop}
       style={disabled ? { opacity: 0.6, pointerEvents: 'none' } : undefined}
     >
-      <strong>Arrastra tu archivo aquí o haz clic para elegirlo</strong>
-      <span className="muted small">CSV, TSV, JSON, NDJSON, Excel (.xlsx) o PDF con tablas · el archivo no se sube a ningún servidor</span>
+      <span className="dz-icon"><Icon name="upload" size={26} /></span>
+      <strong>Arrastra tu archivo aquí o <span className="dz-link">haz clic para elegirlo</span></strong>
+      <span className="muted small">Lee el archivo, perfila sus columnas y marca cada registro con problemas.</span>
+      <span className="dz-formats" aria-label="Formatos aceptados">
+        {['CSV', 'TSV', 'JSON', 'NDJSON', 'XLSX', 'PDF (tablas)'].map((f) => (<span key={f} className="tag">{f}</span>))}
+      </span>
+      <span className="chip ok dz-privacy"><Icon name="lock" size={12} /> Tu archivo se revisa en tu navegador · no se sube a ningún servidor</span>
       <input
         ref={input}
         type="file"

@@ -27,7 +27,8 @@ import { ActionPlan } from './ActionPlan';
 import { RecordDrawer } from './RecordDrawer';
 import { ReportTable, type TableFocus } from './ReportTable';
 import { SettingsPanel, type UiSettings } from './SettingsPanel';
-import { Summary } from './Summary';
+import { Icon } from './Icon';
+import { SummaryStats, SummaryCharts } from './Summary';
 
 const SAMPLE_KINDS: Array<[SynthKind, string]> = [['invoices', 'Facturas (CSV)'], ['inventory', 'Inventario (JSON)'], ['orders', 'Pedidos (CSV)']];
 const SAMPLE_SIZES = [10_000, 50_000, 200_000, 500_000];
@@ -241,19 +242,26 @@ export default function Analyzer() {
 
   const defaultBaselineName = `${report?.meta.fileName.replace(/\.[^.]+$/, '') ?? 'Histórico'} · ${new Date().toLocaleDateString('es-CO')}`;
 
-  return (
-    <div className="stack">
-      <header>
-        <p className="eyebrow">Análisis</p>
-        <h1 style={{ fontSize: '2rem' }}>Analizar un archivo</h1>
-        <p className="muted" style={{ maxWidth: 720 }}>Sube un archivo y te mostramos duplicados, campos vacíos, valores fuera de rango y registros sospechosos, con una explicación de cada uno. El archivo se revisa en tu equipo y no se sube a ningún servidor.</p>
-      </header>
+  const pct = Math.round((progress?.overall ?? 0) * 100);
+  const left = timeLeft(progress, startedAt);
 
+  return (
+    <div className="stack analyzer">
+      <header className="page-head">
+        <div>
+          <p className="eyebrow">Análisis</p>
+          <h1>Analizar un archivo</h1>
+          <p>Sube un archivo y te mostramos duplicados, campos vacíos, valores fuera de rango y registros sospechosos, con una explicación de cada uno.</p>
+        </div>
+      </header>
 
       {previous && !session && !restored && !busy && (
         <section className="card restore-banner" aria-label="Análisis anterior">
-          <span className="small">
-            Tienes un análisis anterior de <b>{previous.report.meta.fileName}</b> ({fmtInt(previous.report.totalFindings)} hallazgos, {new Date(previous.savedAt).toLocaleString('es-CO')}).
+          <span className="row" style={{ gap: 10 }}>
+            <span className="icon-tile"><Icon name="history" /></span>
+            <span className="small">
+              Tienes un análisis anterior de <b>{previous.report.meta.fileName}</b> ({fmtInt(previous.report.totalFindings)} hallazgos, {new Date(previous.savedAt).toLocaleString('es-CO')}).
+            </span>
           </span>
           <span className="row">
             <button className="btn sm primary" onClick={restore}>Restaurar</button>
@@ -262,55 +270,75 @@ export default function Analyzer() {
         </section>
       )}
 
-      <Dropzone onFile={(f) => void start(f, f.name)} disabled={busy} />
-      <div className="row small sample-row">
-        <span className="muted">¿No tienes un archivo a la mano? Prueba con datos de ejemplo que traen errores a propósito:</span>
-        <select className="input" aria-label="Tipo de datos de ejemplo" value={sampleKind} onChange={(e) => setSampleKind(e.target.value as SynthKind)} disabled={busy}>
-          {SAMPLE_KINDS.map(([k, l]) => (<option key={k} value={k}>{l}</option>))}
-        </select>
-        <select className="input" aria-label="Cantidad de filas" value={sampleRows} onChange={(e) => setSampleRows(Number(e.target.value))} disabled={busy}>
-          {SAMPLE_SIZES.map((n) => (<option key={n} value={n}>{fmtInt(n)} filas</option>))}
-        </select>
-        <button className="btn sm" onClick={() => void startSample()} disabled={busy} data-testid="sample-btn">Generar y analizar</button>
-      </div>
-
-      <details className="card settings-card">
-        <summary>
-          <b>Ajustes del análisis</b> <span className="small muted">(opcional: qué tan estricto ser, uso de la IA y formato de fechas)</span>
-        </summary>
-        <div style={{ marginTop: 14 }}>
-          <SettingsPanel value={settings} onChange={setSettings} baselines={baselines} baselinesError={baselinesError} disabled={busy} />
-        </div>
-      </details>
-
-      {(busy || phase === 'done') && (
-        <section className="card stack" aria-label="Progreso" aria-live="polite">
-          <div className="row spread">
-            <div>
-              <b>{fileInfo?.name}</b> <span className="muted small">{fileInfo ? fmtBytes(fileInfo.size) : ''}</span>
+      <section className="card upload-card" aria-label="Archivo a analizar">
+        <Dropzone onFile={(f) => void start(f, f.name)} disabled={busy} />
+        {(busy || phase === 'done') && (
+          <div className="run-strip" aria-live="polite">
+            <div className="run-line">
+              <span className="run-file">
+                {phase === 'done' ? <Icon name="checkCircle" size={16} style={{ color: 'var(--ok)' }} /> : <Icon name="file" size={16} />}
+                <b>{fileInfo?.name}</b> <span className="muted">{fileInfo ? fmtBytes(fileInfo.size) : ''}</span>
+              </span>
+              <span className="run-meta small">
+                {phase === 'generating' && <span className="muted">Generando datos de ejemplo…</span>}
+                {phase === 'running' && (
+                  <>
+                    <span className="muted">
+                      {progress?.message ?? 'Preparando…'}
+                      {progress?.rows ? ` · ${fmtInt(progress.rows)} registros` : ''}
+                      {left ? ` · ${left}` : ''}
+                    </span>
+                    <b className="mono">{pct}%</b>
+                    <button className="btn sm danger" onClick={cancel}><Icon name="x" size={14} /> Cancelar</button>
+                  </>
+                )}
+                {phase === 'done' && report && <span>Análisis terminado en <b>{fmtMs(report.meta.durationMs)}</b>.</span>}
+              </span>
             </div>
-            {busy && phase === 'running' && <button className="btn sm" onClick={cancel}>Cancelar</button>}
-          </div>
-          {phase === 'generating' && <p className="muted">Generando datos de ejemplo…</p>}
-          {phase === 'running' && (
-            <>
-              <div className="progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round((progress?.overall ?? 0) * 100)}>
-                <i style={{ width: `${(progress?.overall ?? 0) * 100}%` }} />
+            {phase === 'running' && (
+              <div className="progress" role="progressbar" aria-label="Progreso del análisis" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct}>
+                <i style={{ width: `${pct}%` }} />
               </div>
-              <p className="small muted" style={{ margin: 0 }}>
-                {progress?.message ?? 'Preparando…'}
-                {progress?.rows ? ` · ${fmtInt(progress.rows)} registros` : ''}
-                {timeLeft(progress, startedAt) ? ` · ${timeLeft(progress, startedAt)}` : ''}
-              </p>
-            </>
-          )}
-          {phase === 'done' && report && (
-            <p className="small" style={{ margin: 0 }}>
-              Análisis terminado en <b>{fmtMs(report.meta.durationMs)}</b>.
-            </p>
-          )}
-        </section>
-      )}
+            )}
+          </div>
+        )}
+      </section>
+
+      <section className="card sample-card" aria-label="Datos de ejemplo y ajustes">
+        <div className="sample-row">
+          <div className="sample-intro">
+            <span className="icon-tile"><Icon name="sparkles" /></span>
+            <div>
+              <h2 className="card-title">¿No tienes un archivo a la mano?</h2>
+              <p className="small muted" style={{ margin: 0 }}>Prueba con datos de ejemplo que traen errores a propósito.</p>
+            </div>
+          </div>
+          <div className="sample-controls">
+            <label className="select-label">
+              <span>Datos</span>
+              <select className="input" aria-label="Tipo de datos de ejemplo" value={sampleKind} onChange={(e) => setSampleKind(e.target.value as SynthKind)} disabled={busy}>
+                {SAMPLE_KINDS.map(([k, l]) => (<option key={k} value={k}>{l}</option>))}
+              </select>
+            </label>
+            <label className="select-label">
+              <span>Cantidad</span>
+              <select className="input" aria-label="Cantidad de filas" value={sampleRows} onChange={(e) => setSampleRows(Number(e.target.value))} disabled={busy}>
+                {SAMPLE_SIZES.map((n) => (<option key={n} value={n}>{fmtInt(n)} filas</option>))}
+              </select>
+            </label>
+            <button className="btn primary" onClick={() => void startSample()} disabled={busy} data-testid="sample-btn"><Icon name="play" size={14} /> Generar y analizar</button>
+          </div>
+        </div>
+        <details className="settings-card">
+          <summary>
+            <Icon name="sliders" size={16} />
+            <span><b>Ajustes del análisis</b> <span className="muted">(opcional: qué tan estricto ser, uso de la IA y formato de fechas)</span></span>
+          </summary>
+          <div className="settings-body">
+            <SettingsPanel value={settings} onChange={setSettings} baselines={baselines} baselinesError={baselinesError} disabled={busy} />
+          </div>
+        </details>
+      </section>
 
       {error && <p className="alert error" role="alert">{error}</p>}
 
@@ -325,6 +353,8 @@ export default function Analyzer() {
           {report.meta.truncated && <p className="alert warn small">Hay más hallazgos de los que se muestran: se conservaron los de mayor puntaje.</p>}
           {fellBack && <p className="alert warn small">El servicio de IA no respondió; se usó el modelo local de este navegador.</p>}
 
+          <SummaryStats data={{ rows: report.meta.rows, columns: report.meta.columns, findingsCount: report.totalFindings, recordsAffected: report.recordsAffected, byRisk: report.byRisk, byType: report.byType }} />
+
           <ActionPlan
             rows={report.meta.rows}
             recordsAffected={report.recordsAffected}
@@ -335,29 +365,36 @@ export default function Analyzer() {
             onShow={(f) => setFocus({ ...f, nonce: Date.now() })}
           />
 
-          <div className="row">
-            <button className="btn" onClick={() => downloadText(`${report.meta.fileName}.anomalias.csv`, findingsToCsv(report.findings), 'text/csv')}>Descargar para Excel (CSV)</button>
-            <button className="btn" onClick={() => downloadText(`${report.meta.fileName}.anomalias.json`, findingsToJson(report.findings), 'application/json')}>Descargar JSON</button>
-            <button className="btn primary" onClick={() => void save()}>Guardar en historial</button>
-            {saveMsg && (
-              <span className={`small ${saveMsg.kind === 'error' ? '' : 'muted'}`} role="status" style={saveMsg.kind === 'error' ? { color: 'var(--critical)' } : undefined}>
-                {saveMsg.text} {saveMsg.id && <Link href={`/reportes/${saveMsg.id}`}>Abrir reporte</Link>}
-                {saveMsg.login && <Link href="/ingresar?next=/analizar">Ingresar</Link>}
-              </span>
-            )}
+          <div>
+            <h2 className="section-title">Todos los hallazgos</h2>
+            <p className="small muted" style={{ margin: '2px 0 0' }}>Haz clic en una fila para ver el registro completo y por qué se marcó.</p>
           </div>
+          <ReportTable
+            findings={report.findings}
+            selected={selected}
+            onOpen={setSelected}
+            focus={focus}
+            actions={
+              <>
+                <button className="btn" onClick={() => downloadText(`${report.meta.fileName}.anomalias.csv`, findingsToCsv(report.findings), 'text/csv')}><Icon name="download" size={16} /> Descargar para Excel (CSV)</button>
+                <button className="btn" onClick={() => downloadText(`${report.meta.fileName}.anomalias.json`, findingsToJson(report.findings), 'application/json')}><Icon name="download" size={16} /> Descargar JSON</button>
+                <button className="btn primary" onClick={() => void save()}><Icon name="save" size={16} /> Guardar en historial</button>
+              </>
+            }
+          />
+          {saveMsg && (
+            <p className={`alert small ${saveMsg.kind === 'error' ? 'error' : ''}`} role="status">
+              {saveMsg.text} {saveMsg.id && <Link href={`/reportes/${saveMsg.id}`}>Abrir reporte</Link>}
+              {saveMsg.login && <Link href="/ingresar?next=/analizar">Ingresar</Link>}
+            </p>
+          )}
 
-          <h2 style={{ marginBottom: 0 }}>Todos los hallazgos</h2>
-          <p className="small muted" style={{ margin: 0 }}>Haz clic en una fila para ver el registro completo y por qué se marcó.</p>
-          <ReportTable findings={report.findings} selected={selected} onOpen={setSelected} focus={focus} />
-
-          <Summary data={{ rows: report.meta.rows, columns: report.meta.columns, findingsCount: report.totalFindings, recordsAffected: report.recordsAffected, byRisk: report.byRisk, byType: report.byType }} />
+          <SummaryCharts data={{ rows: report.meta.rows, columns: report.meta.columns, findingsCount: report.totalFindings, recordsAffected: report.recordsAffected, byRisk: report.byRisk, byType: report.byType }} />
           {selected && <RecordDrawer finding={selected} findings={report.findings} loadRecord={loadRecord} onClose={() => setSelected(null)} />}
 
           <BaselinePanel training={training} defaultName={defaultBaselineName} baselines={baselines} onChanged={() => void loadBaselines()} />
         </>
       )}
-
     </div>
   );
 }
