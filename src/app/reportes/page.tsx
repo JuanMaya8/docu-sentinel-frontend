@@ -13,7 +13,6 @@ export const metadata: Metadata = { title: 'Historial de reportes' };
 export const maxDuration = 60;
 export const dynamic = 'force-dynamic';
 
-const MODE: Record<string, string> = { main: 'Hilo principal', worker: '1 worker', pool: 'Workers' };
 
 export default async function ReportsPage() {
   let items: AnalysisSummary[] = [];
