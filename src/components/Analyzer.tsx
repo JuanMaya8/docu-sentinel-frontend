@@ -325,10 +325,18 @@ export default function Analyzer() {
           {report.meta.truncated && <p className="alert warn small">Hay más hallazgos de los que se muestran: se conservaron los de mayor puntaje.</p>}
           {fellBack && <p className="alert warn small">El servicio de IA no respondió; se usó el modelo local de este navegador.</p>}
 
-          <Summary data={{ rows: report.meta.rows, columns: report.meta.columns, findingsCount: report.totalFindings, recordsAffected: report.recordsAffected, byRisk: report.byRisk, byType: report.byType }} />
+          <ActionPlan
+            rows={report.meta.rows}
+            recordsAffected={report.recordsAffected}
+            totalFindings={report.totalFindings}
+            byRisk={report.byRisk}
+            byType={report.byType}
+            findings={report.findings}
+            onShow={(f) => setFocus({ ...f, nonce: Date.now() })}
+          />
 
           <div className="row">
-            <button className="btn" onClick={() => downloadText(`${report.meta.fileName}.anomalias.csv`, findingsToCsv(report.findings), 'text/csv')}>Descargar CSV</button>
+            <button className="btn" onClick={() => downloadText(`${report.meta.fileName}.anomalias.csv`, findingsToCsv(report.findings), 'text/csv')}>Descargar para Excel (CSV)</button>
             <button className="btn" onClick={() => downloadText(`${report.meta.fileName}.anomalias.json`, findingsToJson(report.findings), 'application/json')}>Descargar JSON</button>
             <button className="btn primary" onClick={() => void save()}>Guardar en historial</button>
             {saveMsg && (
