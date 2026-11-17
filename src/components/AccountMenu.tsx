@@ -6,6 +6,12 @@ import { useEffect, useState } from 'react';
 import { api } from '@/lib/api';
 import { SESSION_EVENT, clearSession, getStoredUser, type SessionUser } from '@/lib/session';
 
+/** "Juan David" → "JD"; "ana@x.co" → "A". */
+function initials(text: string): string {
+  const words = text.split('@')[0].split(/[\s._-]+/).filter(Boolean);
+  return (words.length > 1 ? words[0][0] + words[1][0] : (words[0] ?? '?')[0]).toUpperCase();
+}
+
 /** Header account area. Hidden when the backend has no accounts (or is unreachable). */
 export function AccountMenu() {
   const router = useRouter();
@@ -39,6 +45,7 @@ export function AccountMenu() {
   }
   return (
     <div className="account">
+      <span className="avatar" aria-hidden="true">{initials(user.name || user.email)}</span>
       <span className="small muted account-name" title={user.email}>{user.name || user.email}</span>
       <button
         type="button"
