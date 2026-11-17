@@ -19,16 +19,13 @@ import {
 } from '@/engine';
 import { api, errorMessage, isAuthError, type BaselineDto } from '@/lib/api';
 import { clearLastAnalysis, loadLastAnalysis, saveLastAnalysis, type StoredAnalysis } from '@/lib/lastAnalysis';
-import { FrameMonitor, type FrameStats } from '@/lib/frameMonitor';
 import { downloadText, fmtBytes, fmtInt, fmtMs } from '@/lib/format';
 import { defaultWorkerCount, runAnalysis } from '@/lib/runner';
 import { BaselinePanel } from './BaselinePanel';
 import { Dropzone } from './Dropzone';
-import { LiveMeter } from './LiveMeter';
-import { ModeSelector } from './ModeSelector';
-import { MODE_LABEL } from '@/lib/modes';
+import { ActionPlan } from './ActionPlan';
 import { RecordDrawer } from './RecordDrawer';
-import { ReportTable } from './ReportTable';
+import { ReportTable, type TableFocus } from './ReportTable';
 import { SettingsPanel, type UiSettings } from './SettingsPanel';
 import { Summary } from './Summary';
 
