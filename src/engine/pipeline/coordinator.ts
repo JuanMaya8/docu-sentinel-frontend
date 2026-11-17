@@ -225,7 +225,7 @@ export async function analyzeFile(
       } else {
         const columnsF = s.map((f) => f.name);
         const kinds = s.map((f) => f.kind);
-        report('features', 0.8, 'Entrenando el modelo de anomalías…');
+        report('features', 0.8, 'La IA está aprendiendo cómo son tus datos…');
         // trained inside a worker (it is CPU-heavy): the UI thread never runs it unless the user chose "main thread" mode
         forest = await pool.call(0, 'train', { matrix, rows, columns: columnsF, kinds, contamination: CONTAMINATION[options.sensitivity], thresholdFloor: THRESHOLD_FLOOR[options.sensitivity], seed: options.ml.seed });
         hooks.onTrainingSample?.({
