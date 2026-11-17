@@ -93,7 +93,7 @@ try {
   await dialog.waitFor({ state: 'detached' });
   check('El cajón del registro atrapa el foco y se cierra con Escape', focusInside);
 
-  const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Descargar CSV' }).click()]);
+  const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Descargar para Excel' }).click()]);
   check('Exportar CSV descarga un archivo', download.suggestedFilename().endsWith('.csv'), download.suggestedFilename());
 
   const toggle = page.locator('.theme-toggle');
