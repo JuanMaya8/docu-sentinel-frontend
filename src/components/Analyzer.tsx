@@ -298,11 +298,12 @@ export default function Analyzer() {
                 <i style={{ width: `${(progress?.overall ?? 0) * 100}%` }} />
               </div>
               <p className="small muted" style={{ margin: 0 }}>
-                {progress?.message ?? 'Preparando…'} {progress?.rows ? `· ${fmtInt(progress.rows)} registros leídos` : ''}
+                {progress?.message ?? 'Preparando…'}
+                {progress?.rows ? ` · ${fmtInt(progress.rows)} registros` : ''}
+                {timeLeft(progress, startedAt) ? ` · ${timeLeft(progress, startedAt)}` : ''}
               </p>
             </>
           )}
-          <LiveMeter monitor={monitor} active={phase === 'running'} stats={finalFrames} />
           {phase === 'done' && report && (
             <p className="small" style={{ margin: 0 }}>
               Análisis terminado en <b>{fmtMs(report.meta.durationMs)}</b>.
