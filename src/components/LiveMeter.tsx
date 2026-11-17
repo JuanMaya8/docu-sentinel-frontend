@@ -46,11 +46,11 @@ export function LiveMeter({ monitor, active, stats: finalStats }: { monitor: Fra
         </div>
         <div>
           <b>{stats.freezes}</b>
-          <span>congelamientos (&gt;{FREEZE_MS} ms)</span>
+          <span>trabas (&gt;{FREEZE_MS} ms)</span>
         </div>
         <div>
           <b>{fmtMs(stats.frozenMs)}</b>
-          <span>tiempo congelado</span>
+          <span>tiempo trabado</span>
         </div>
       </div>
     </div>
