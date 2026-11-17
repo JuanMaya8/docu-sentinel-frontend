@@ -51,7 +51,6 @@ type Phase = 'idle' | 'generating' | 'running' | 'done' | 'error';
 export default function Analyzer() {
   const [mode, setMode] = useState<ProcessingMode>('pool');
   const [workers, setWorkers] = useState(4);
-  const [maxWorkers, setMaxWorkers] = useState(7);
   const [settings, setSettings] = useState<UiSettings>({
     sensitivity: 'medium',
     mlMode: 'local',
