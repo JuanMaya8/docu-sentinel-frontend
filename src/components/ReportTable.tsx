@@ -52,6 +52,17 @@ export function ReportTable({ findings, onOpen, selected, focus }: { findings: F
     setScrollTop(0);
     if (body.current) body.current.scrollTop = 0;
   };
+  useEffect(() => {
+    if (!focus) return;
+    setType(focus.type ?? '');
+    setRisk('');
+    setQuery('');
+    setSort(focus.urgentFirst ? 'risk' : 'score');
+    setScrollTop(0);
+    if (body.current) body.current.scrollTop = 0;
+    section.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [focus]);
+
   const onKey = (e: KeyboardEvent, f: Finding): void => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
