@@ -20,11 +20,11 @@ export default function HomePage() {
         <h1>Encuentra lo que está mal en tus archivos antes de que cueste dinero.</h1>
         <p className="lead">
           Sube un CSV, JSON o PDF con tablas. Docu Sentinel revisa cada registro con reglas y con un modelo de IA que aprende de tus datos históricos, y te
-          entrega un reporte explicado en español. El procesamiento pesado corre en <b>Web Workers</b>: la página nunca se congela.
+          entrega un reporte explicado en español. El archivo se revisa por partes y en segundo plano: la página no se traba ni con archivos grandes.
         </p>
         <div className="row">
           <Link className="btn primary" href="/analizar">Analizar un archivo</Link>
-          <Link className="btn" href="/benchmark">Ver Main Thread vs Workers</Link>
+          <Link className="btn" href="/benchmark">Comparar velocidad</Link>
         </div>
       </section>
 
