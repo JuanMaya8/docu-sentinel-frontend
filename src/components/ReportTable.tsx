@@ -1,6 +1,6 @@
 'use client';
 
-import { useDeferredValue, useMemo, useRef, useState, type KeyboardEvent } from 'react';
+import { useDeferredValue, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { RISK_LABELS_ES, TYPE_LABELS_ES, type AnomalyType, type Finding, type RiskLevel } from '@/engine';
 import { recordLabel } from '@/engine/exporters';
 import { RiskChip } from './Summary';
